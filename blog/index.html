@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+
+    <nav class="glass-nav">
+        <div class="logo">AUXILIARYFRFR</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="#" class="active">Blog</a></li>
+            <li><a href="../projects/">Projects</a></li>
+            <li><a href="../socials/">Socials</a></li>
+            <li><a href="../dash/" class="cyber-link">/dash</a></li>
+        </ul>
+    </nav>
+
+    <div id="app-container">
+        <section class="section-padding" style="margin-top: 6rem;">
+            <h2 class="section-title">BLOG <span class="pink-glow">LOGS</span></h2>
+            
+            <div class="blog-controls">
+                
+                <div class="search-row">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search logs by keyword..." autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="filters-row">
+                    
+                    <div class="tags-container">
+                        <button class="filter-tag active" data-tag="all">All</button>
+                        <button class="filter-tag" data-tag="security">Security</button>
+                        <button class="filter-tag" data-tag="code">Code</button>
+                        <button class="filter-tag" data-tag="politics">Politics</button>
+                        <button class="filter-tag" data-tag="other">Other</button>
+                    </div>
+
+                    <div class="custom-dropdown" id="customSort">
+                        <div class="dropdown-trigger">
+                            <span id="currentSort">Sort: Newest</span>
+                            <i class="fas fa-chevron-down arrow-icon"></i>
+                        </div>
+                        <ul class="dropdown-options">
+                            <li data-value="newest" class="active-option">Sort: Newest</li>
+                            <li data-value="oldest">Sort: Oldest</li>
+                            <li data-value="az">Sort: A-Z</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            <div class="project-grid" id="blogGrid">
+                
+                <article class="project-card blog-post" data-title="Welcome to my website!" data-date="2026-01-17" data-tags="other">
+                    <h3>Welcome to my website!</h3>
+                    <p class="post-meta">Jan 17, 2026 • 1 min read</p>
+                    
+                    <div class="tech-stack" style="margin-bottom: 1rem;">
+                        <span class="tag">Other</span>
+                    </div>
+
+                    <p class="post-description">
+                        A short welcome message to introduce visitors to my personal website and blog.
+                    </p>
+                    
+                    <div class="card-links">
+                        <a href="welcome.html" class="read-btn">Read Blog &rarr;</a>
+                    </div>
+                </article>
+
+            </div>
+
+            <div id="noResults" class="hidden" style="text-align: center; margin-top: 3rem; color: #666;">
+                <p>No logs found matching query.</p>
+            </div>
+
+        </section>
+
+        <footer class="glass-footer">
+            <div class="status-indicator">
+                <span class="dot online"></span>
+                <span class="status-text">System Status: 99.98% Uptime</span>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 auxiliaryfrfr. MIT License.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../js/blog.js"></script>
+</body>
+</html>

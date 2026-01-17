@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+        }
+
+        .glass-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 50px;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            color: #ff69b4; 
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-size: 18px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.2s, text-shadow 0.2s;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .nav-links li a:hover { color: #fff; }
+        .nav-links li a.active { color: #fff; }
+
+        .cyber-link {
+            color: #ff69b4 !important;
+            font-weight: 700 !important;
+            text-shadow: 0 0 8px rgba(255, 105, 180, 0.4);
+        }
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 140px; 
+            transition: opacity 0.5s ease;
+        }
+
+        .terminal-window {
+            width: 700px;
+            background-color: #0c0c0c;
+            border: 1px solid #222;
+            border-radius: 8px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Courier New', Courier, monospace; 
+        }
+
+        .terminal-header {
+            background-color: #151515;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            position: relative;
+        }
+
+        .traffic-lights { display: flex; gap: 8px; }
+        .light { width: 11px; height: 11px; border-radius: 50%; }
+        .green { background-color: #00fa9a; box-shadow: 0 0 4px rgba(0, 250, 154, 0.4); }
+        
+        .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #444;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            min-height: 300px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+            cursor: text;
+        }
+
+        .green-text { color: #00fa9a; text-shadow: 0 0 8px rgba(0, 250, 154, 0.3); }
+        .pink-text { color: #ff69b4; text-shadow: 0 0 8px rgba(255, 105, 180, 0.3); }
+        .red-text { color: #ff4444; text-shadow: 0 0 8px rgba(255, 68, 68, 0.3); }
+        .gray-text { color: #666; font-style: italic; }
+
+        .typing-cursor::after {
+            content: '█';
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+            color: #00fa9a;
+            text-shadow: 0 0 5px rgba(0, 250, 154, 0.5);
+        }
+
+        .input-line { display: none; align-items: center; margin-top: 10px; }
+        .prompt { color: #ff69b4; margin-right: 10px; text-shadow: 0 0 5px rgba(255, 105, 180, 0.4); }
+        
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            flex-grow: 1;
+            outline: none;
+            caret-color: #ff69b4;
+        }
+        
+        input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        #dashboard-view {
+            display: none;
+            flex-grow: 1;
+            padding: 140px 60px 40px 60px; 
+            animation: fadeIn 1s ease forwards;
+            overflow-y: auto;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 30px;
+            border-radius: 6px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #ff69b4;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.2);
+        }
+
+        .stat {
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .stat.online { color: #00fa9a; text-shadow: 0 0 15px rgba(0, 250, 154, 0.2); }
+        .stat.max { color: #ff69b4; text-shadow: 0 0 15px rgba(255, 105, 180, 0.2); }
+        .subtext { color: #666; font-size: 13px; font-weight: 500; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="glass-nav">
+        <div class="logo">ADMIN ONLY DASHBOARD</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../blog/">Blog</a></li>
+            <li><a href="../projects/">Projects</a></li>
+            <li><a href="../socials/">Socials</a></li>
+            <li><a href="#" class="active">/dash</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" id="terminal-container">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="traffic-lights">
+                    <div class="light green"></div>
+                    <div class="light green"></div>
+                    <div class="light green"></div>
+                </div>
+                <div class="title">auth_gateway.exe</div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div id="static-header">
+                    AUXILIARY GATEWAY [Version 2.0.4]<br>
+                    (c) 2026 auxiliaryfrfr. All rights reserved.<br><br>
+                </div>
+                <div id="animated-text"></div>
+                <div class="input-line" id="inputLine">
+                    <span class="prompt">root@auxiliaryfrfr:~$</span>
+                    <input type="text" id="commandInput" autocomplete="off" spellcheck="false" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard-view">
+        <div class="dash-grid">
+            <div class="card">
+                <h3>System Status</h3>
+                <div class="stat online">ONLINE</div>
+                <p class="subtext">Uptime: 42h 12m</p>
+            </div>
+            <div class="card">
+                <h3>Active Nodes</h3>
+                <div class="stat">1,024</div>
+                <p class="subtext">Load: 34%</p>
+            </div>
+            <div class="card">
+                <h3>Security Level</h3>
+                <div class="stat max">MAX</div>
+                <p class="subtext">0 Threats Detected</p>
+            </div>
+            <div class="card" style="grid-column: span 3; height: 400px; display: flex; align-items: center; justify-content: center; border: 1px dashed #333; background: transparent;">
+    
+    <p style="color: #444; font-family: 'Courier New', monospace; text-align: center; line-height: 1.5;">
+        DATA VISUALIZATION MODULE LOADING...<br>
+        <span style="font-size: 12px; opacity: 0.7;">(im lying, idk what else to put here lol)</span>
+    </p>
+
+</div>
+        </div>
+    </div>
+
+    <script>
+        const animatedTextContainer = document.getElementById('animated-text');
+        const inputLine = document.getElementById('inputLine');
+        const commandInput = document.getElementById('commandInput');
+        const terminalBody = document.getElementById('terminalBody');
+        const terminalContainer = document.getElementById('terminal-container');
+        const dashboardView = document.getElementById('dashboard-view');
+
+        const lines = [
+            "> ESTABLISHING SECURE CONNECTION...",
+            "> CONNECTION ESTABLISHED.",
+            "", 
+            "> PLEASE ENTER CREDENTIALS:"
+        ];
+
+        const typeSpeed = 25; 
+        const linePause = 300; 
+        const VALID_PASSWORD = "admin";
+        
+        let failCount = 0;
+        let isLocked = false;
+
+        async function typeWriter(text, element) {
+            element.classList.add('typing-cursor');
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text.charAt(i);
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+                await new Promise(r => setTimeout(r, typeSpeed));
+            }
+            element.classList.remove('typing-cursor');
+        }
+
+        async function runSequence() {
+            for (let line of lines) {
+                const div = document.createElement('div');
+                if (line.includes("ESTABLISHED") || line.includes("CONNECTION")) {
+                    div.classList.add('green-text');
+                }
+                animatedTextContainer.appendChild(div);
+                
+                if (line.length > 0) {
+                    await typeWriter(line, div);
+                    await new Promise(r => setTimeout(r, linePause));
+                } else {
+                    div.innerHTML = "&nbsp;"; 
+                }
+            }
+            inputLine.style.display = 'flex';
+            commandInput.focus();
+        }
+
+        window.onload = runSequence;
+
+        terminalBody.addEventListener('click', () => {
+            if (inputLine.style.display !== 'none' && !isLocked) {
+                commandInput.focus();
+            }
+        });
+
+        async function runTakeover() {
+            const snarkLine = document.createElement('div');
+            snarkLine.className = 'history-line gray-text';
+            snarkLine.style.marginTop = '10px';
+            terminalBody.insertBefore(snarkLine, inputLine);
+            
+            await typeWriter("> ...Sigh. I'll do it for you.", snarkLine);
+            await new Promise(r => setTimeout(r, 1000)); 
+
+            commandInput.value = "";
+            commandInput.focus(); 
+            
+            const autoPass = "admin";
+            for (let i = 0; i < autoPass.length; i++) {
+                commandInput.value += autoPass.charAt(i);
+                await new Promise(r => setTimeout(r, 150)); 
+            }
+
+            await new Promise(r => setTimeout(r, 600)); 
+
+            triggerSuccess();
+        }
+
+        function triggerSuccess() {
+            const responseLine = document.createElement('div');
+            responseLine.style.marginBottom = '5px';
+            responseLine.innerHTML = `> <span class="green-text">ACCESS GRANTED.</span> INITIALIZING DASHBOARD...`;
+            terminalBody.insertBefore(responseLine, inputLine);
+            inputLine.style.display = 'none'; 
+            
+            setTimeout(() => {
+                terminalContainer.style.opacity = '0';
+                setTimeout(() => {
+                    terminalContainer.style.display = 'none';
+                    dashboardView.style.display = 'block';
+                }, 500);
+            }, 1500);
+        }
+
+        commandInput.addEventListener('keydown', async function(e) {
+            if (e.key === 'Enter' && !isLocked) {
+                const command = this.value;
+                const historyLine = document.createElement('div');
+                historyLine.style.marginBottom = '5px';
+                historyLine.innerHTML = `<span class="prompt">root@auxiliaryfrfr:~$</span> ${command}`;
+                terminalBody.insertBefore(historyLine, inputLine);
+
+                this.value = '';
+
+                if (command.trim() === VALID_PASSWORD) {
+                    triggerSuccess();
+                } else {
+                    failCount++;
+                    isLocked = true; 
+                    commandInput.disabled = true;
+
+                    const responseLine = document.createElement('div');
+                    responseLine.className = 'history-line';
+                    terminalBody.insertBefore(responseLine, inputLine);
+
+                    responseLine.innerHTML = `> <span class="red-text">ACCESS DENIED.</span> `;
+                    
+                    if (failCount === 1) {
+                        const sassyPart = document.createElement('span');
+                        sassyPart.className = 'gray-text';
+                        responseLine.appendChild(sassyPart);
+                        await typeWriter(" (Psst... the password is 'admin')", sassyPart);
+                        
+                    } else if (failCount === 2) {
+                        const sassyPart = document.createElement('span');
+                        sassyPart.className = 'gray-text';
+                        responseLine.appendChild(sassyPart);
+                        await typeWriter(" Seriously? I just told you.", sassyPart);
+
+                    } else if (failCount >= 3) {
+                        await new Promise(r => setTimeout(r, 500)); 
+                        runTakeover();
+                        return; 
+                    }
+
+                    isLocked = false;
+                    commandInput.disabled = false;
+                    commandInput.focus();
+                    terminalBody.scrollTop = terminalBody.scrollHeight;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
