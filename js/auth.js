@@ -36,73 +36,139 @@ function updateUI(user) {
     const discordName = user.user_metadata.full_name || user.user_metadata.name;
     const discordAvatar = user.user_metadata.avatar_url;
     
-    const nameEl = document.querySelector('.user-name');
-    const miniAvatar = document.querySelector('.mini-avatar');
+    const nameEls = document.querySelectorAll('.user-name');
+    const miniAvatars = document.querySelectorAll('.mini-avatar');
     const navProfile = document.querySelector('.profile-pic');
     const trigger = document.getElementById('profileTrigger');
 
-    if (nameEl) nameEl.innerText = discordName;
-    if (miniAvatar) miniAvatar.src = discordAvatar;
+    nameEls.forEach(el => el.innerText = discordName);
+    miniAvatars.forEach(el => el.src = discordAvatar);
     if (navProfile) navProfile.src = discordAvatar;
     
     if (newsletterWrapper) newsletterWrapper.classList.remove('locked');
     if (trigger) trigger.style.borderColor = "#5865F2";
+
+    checkSubscriptionStatus(user);
+}
+
+async function checkSubscriptionStatus(user) {
+    const input = document.querySelector('.newsletter-form input');
+    const form = document.querySelector('.newsletter-form');
+
+    if (input) {
+        input.value = user.email;
+        input.setAttribute('readonly', true);
+        
+        if (!document.querySelector('.input-lock')) {
+            const lock = document.createElement('div');
+            lock.className = 'input-lock';
+            lock.innerHTML = '<i class="fas fa-shield-alt"></i>';
+            if (form) form.prepend(lock);
+        }
+    }
+
+    const { data } = await supabaseClient
+        .from('subscribers')
+        .select('*')
+        .eq('user_uuid', user.id)
+        .single();
+
+    if (data) {
+        setSubscribeState('subscribed');
+    }
 }
 
 async function handleNewsletter(e) {
     e.preventDefault();
-    console.log("Newsletter submission triggered!"); 
-
-    const input = document.querySelector('.newsletter-form input');
     const button = document.querySelector('.newsletter-form button');
-    const email = input.value;
+    
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
 
-    if (!email) {
-        console.log("Email field is empty");
+    if (button.classList.contains('is-subscribed')) {
+        if(!confirm('Unsubscribe from updates?')) return;
+        
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        const { error } = await supabaseClient
+            .from('subscribers')
+            .delete()
+            .eq('user_uuid', user.id);
+
+        if (!error) {
+            setSubscribeState('unsubscribed');
+        } else {
+            console.error(error);
+            alert("Error unsubscribing.");
+            setSubscribeState('subscribed');
+        }
         return;
     }
 
-    const originalIcon = button.innerHTML;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
     const { error } = await supabaseClient
         .from('subscribers')
-        .insert({ email: email });
+        .insert({ 
+            email: user.email,     
+            user_uuid: user.id     
+        });
 
     if (error) {
         console.error("Supabase Error:", error);
         button.innerHTML = '<i class="fas fa-times"></i>'; 
-        button.style.backgroundColor = '#ff5555';
         
-        if (error.code === '23505') alert('You are already subscribed!');
-        else alert('Error: ' + error.message);
-
-        setTimeout(() => { 
-            button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
-            button.style.backgroundColor = '#ff80ab'; 
-        }, 2000);
+        if (error.code === '23505') {
+            setSubscribeState('subscribed');
+        } else {
+            alert('Error: ' + error.message);
+            setTimeout(() => { 
+                button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
+            }, 2000);
+        }
     } else {
-        console.log("Success!");
-        button.innerHTML = '<i class="fas fa-check"></i>';
-        button.style.backgroundColor = '#4CAF50'; 
-        input.value = 'Subscribed!';
-        input.disabled = true;
+        setSubscribeState('subscribed');
     }
 }
 
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
-    newsletterForm.addEventListener('submit', handleNewsletter);
-    console.log("Newsletter listener attached successfully.");
-} else {
-    console.error("Could not find .newsletter-form in HTML");
+function setSubscribeState(state) {
+    const form = document.querySelector('.newsletter-form');
+    const input = document.querySelector('.newsletter-form input');
+    const button = document.querySelector('.newsletter-form button');
+
+    if (state === 'subscribed') {
+        form.classList.add('success');
+        input.value = "Active Operative"; 
+        input.style.color = "#4CAF50"; 
+        
+        button.innerHTML = '<i class="fas fa-times"></i>';
+        button.classList.add('is-subscribed');
+        button.title = "Unsubscribe";
+    } else {
+        form.classList.remove('success');
+        input.style.color = "white"; 
+        
+        button.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        button.classList.remove('is-subscribed');
+        button.title = "Subscribe";
+        
+        supabaseClient.auth.getUser().then(({data}) => {
+            if(data.user) input.value = data.user.email;
+        });
+    }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const newsletterForm = document.querySelector('.newsletter-form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', handleNewsletter);
+    }
+});
 
 
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     const hamburgerIcon = document.querySelector('.hamburger');
-    
     menu.classList.toggle('open');
     hamburgerIcon.classList.toggle('open');
 }
@@ -126,4 +192,4 @@ document.addEventListener('click', function(e) {
     }
 });
 
-checkUser()
+checkUser();
