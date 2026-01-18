@@ -3,6 +3,7 @@ const SUPABASE_KEY = 'sb_publishable_FBcAuoqWgHlZch1XmgWEwA_WKF0JIwE';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+
 async function checkUser() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
@@ -48,6 +49,48 @@ function updateUI(user) {
     if (trigger) trigger.style.borderColor = "#5865F2";
 }
 
+
+async function handleNewsletter(e) {
+    e.preventDefault();
+    const input = document.querySelector('.newsletter-form input');
+    const button = document.querySelector('.newsletter-form button');
+    const email = input.value;
+
+    if (!email) return;
+
+    const originalIcon = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const { error } = await supabaseClient
+        .from('subscribers')
+        .insert({ email: email });
+
+    if (error) {
+        console.error(error);
+        button.innerHTML = '<i class="fas fa-times"></i>'; 
+        button.style.color = '#ff5555';
+        
+        if (error.code === '23505') alert('You are already subscribed!');
+        else alert('Error subscribing. Check console.');
+
+        setTimeout(() => { 
+            button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
+            button.style.color = ''; 
+        }, 2000);
+    } else {
+        button.innerHTML = '<i class="fas fa-check"></i>'; 
+        button.style.color = '#4CAF50';
+        input.value = 'Subscribed!';
+        input.disabled = true;
+    }
+}
+
+const newsletterForm = document.querySelector('.newsletter-form');
+if (newsletterForm) {
+    newsletterForm.onsubmit = handleNewsletter;
+}
+
+
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     const hamburgerIcon = document.querySelector('.hamburger');
@@ -75,4 +118,4 @@ document.addEventListener('click', function(e) {
     }
 });
 
-checkUser();
+checkUser()
