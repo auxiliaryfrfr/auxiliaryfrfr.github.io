@@ -1278,12 +1278,15 @@ body {
 .newsletter-form input:focus { border-color: var(--primary-color); outline: none; }
 
 .newsletter-form button {
-    padding: 0 15px;
-    background: var(--primary-color);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    color: black;
+    background-color: #ff80ab !important; 
+    color: #000 !important; 
+    border: 1px solid #ff80ab;
+    transition: all 0.2s ease;
+}
+
+.newsletter-form button:hover {
+    background-color: #ff4081 !important;
+    box-shadow: 0 0 10px rgba(255, 64, 129, 0.5);
 }
 
 .dropdown-divider {
