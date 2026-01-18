@@ -138,7 +138,7 @@ function setSubscribeState(state) {
 
     if (state === 'subscribed') {
         form.classList.add('success');
-        input.value = "Active Operative"; 
+        input.value = "Subscribed"; 
         input.style.color = "#4CAF50"; 
         
         button.innerHTML = '<i class="fas fa-times"></i>';
