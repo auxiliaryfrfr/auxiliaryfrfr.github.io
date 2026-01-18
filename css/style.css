@@ -1075,3 +1075,42 @@ body {
         margin-bottom: 1.5rem !important; 
         padding-bottom: 1rem !important; 
     }
+
+
+.desktop-only-msg { display: block; }
+.mobile-only-msg { display: none; }
+
+
+@media (max-width: 768px) {
+    
+    .desktop-only-msg { 
+        display: none !important; 
+    }
+
+    .mobile-only-msg { 
+        display: block !important; 
+        animation: pulse 2s infinite; 
+    }
+
+    .mobile-only-msg h1 {
+        font-size: 10vw !important; 
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+    }
+    
+    .mobile-only-msg p {
+        font-size: 0.9rem !important;
+        padding: 0 20px !important;
+        margin-top: 1rem !important;
+        color: #ff80ab !important; 
+    }
+}
+    .mobile-only-msg .section-title {
+        white-space: normal !important; 
+        
+        font-size: 2.5rem !important; 
+        
+        text-align: center !important;
+        line-height: 1.1 !important;
+        width: 100% !important;
+    }
