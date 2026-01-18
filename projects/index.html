@@ -16,26 +16,89 @@
 </head>
 <body>
 
-        <nav class="glass-nav">
-    <div class="logo">AUXILIARYFRFR</div>
+    <nav class="glass-nav">
+    <div class="nav-left-group">
+        <div class="logo">AUXILIARYFRFR</div>
+        <ul class="nav-links desktop-menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../blog/">Blog</a></li>
+            <li><a href="#" class="active">Projects</a></li>
+            <li><a href="../socials/">Socials</a></li>
+            <li><a href="../dash/" class="cyber-link">/dash</a></li>
+        </ul>
+    </div>
 
-    <ul class="nav-links desktop-menu">
-        <li><a href="../index.html">Home</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="#" class="active">Projects</a></li>
-        <li><a href="../socials/">Socials</a></li>
-        <li><a href="../dash/" class="cyber-link">/dash</a></li>
-    </ul>
+    <div class="nav-right-group">
+        
+        <div class="profile-trigger glass-panel" id="profileTrigger" onclick="toggleProfileMenu()">
+            <img src="../images/default-user.png" alt="Profile" class="profile-pic">
+        </div>
 
-    <div class="hamburger" onclick="toggleMobileMenu()">
-        ☰ </div>
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            ☰
+        </div>
+    </div>
+
+    <div class="profile-dropdown glass-panel" id="profileMenu">
+    
+    <div class="auth-section" id="authSection">
+    <button class="btn-auth login-btn" onclick="simulateLogin()">
+        <i class="fab fa-discord"></i> Log In with Discord
+    </button>
+    
+    <div class="user-info hidden" id="userInfo">
+        <div class="user-details">
+            <img src="../images/default-user.png" class="mini-avatar"> 
+            <span class="user-name">awesomeusername</span>
+        </div>
+        
+        <button class="btn-logout-full" onclick="simulateLogout()">
+            <i class="fas fa-power-off"></i> Log Out
+        </button>
+    </div>
+</div>
+    
+    <div class="dropdown-divider"></div>
+
+    <div class="settings-section">
+        <h4><i class="fas fa-sliders-h"></i> Settings</h4>
+        
+        <div class="setting-item">
+            <span>Dark Mode</span>
+            <label class="theme-switch">
+                <input type="checkbox" id="themeToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+    <div class="newsletter-section">
+        <h4><i class="fas fa-broadcast-tower"></i> Notifications</h4>
+        
+        <div class="locked-wrapper locked" id="newsletterWrapper">
+            
+            <div class="lock-overlay">
+                <i class="fas fa-lock"></i>
+                <span>Login Required</span>
+            </div>
+
+            <p class="newsletter-sub">Get notified when new blogs drop.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault();">
+                <input type="email" placeholder="user@domain.com" required>
+                <button type="submit"><i class="fas fa-chevron-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+</div>
 </nav>
-
 <div class="mobile-menu" id="mobileMenu">
-        <li><a href="../index.html">Home</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="#" class="active">Projects</a></li>
-        <li><a href="../socials/">Socials</a></li>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../blog/">Blog</a></li>
+    <li><a href="#" class="active">Projects</a></li>
+    <li><a href="../socials/">Socials</a></li>
 </div>
 
     <div id="app-container">
@@ -75,14 +138,8 @@
             </div>
         </footer>
     </div>
-<script>
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobileMenu');
-        const hamburgerIcon = document.querySelector('.hamburger');
-        
-        menu.classList.toggle('open');
-        hamburgerIcon.classList.toggle('open');
-    }
-</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js"></script>
 </body>
 </html>
