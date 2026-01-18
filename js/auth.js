@@ -49,14 +49,18 @@ function updateUI(user) {
     if (trigger) trigger.style.borderColor = "#5865F2";
 }
 
-
 async function handleNewsletter(e) {
     e.preventDefault();
+    console.log("Newsletter submission triggered!"); 
+
     const input = document.querySelector('.newsletter-form input');
     const button = document.querySelector('.newsletter-form button');
     const email = input.value;
 
-    if (!email) return;
+    if (!email) {
+        console.log("Email field is empty");
+        return;
+    }
 
     const originalIcon = button.innerHTML;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -66,20 +70,21 @@ async function handleNewsletter(e) {
         .insert({ email: email });
 
     if (error) {
-        console.error(error);
+        console.error("Supabase Error:", error);
         button.innerHTML = '<i class="fas fa-times"></i>'; 
-        button.style.color = '#ff5555';
+        button.style.backgroundColor = '#ff5555';
         
         if (error.code === '23505') alert('You are already subscribed!');
-        else alert('Error subscribing. Check console.');
+        else alert('Error: ' + error.message);
 
         setTimeout(() => { 
             button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
-            button.style.color = ''; 
+            button.style.backgroundColor = '#ff80ab'; 
         }, 2000);
     } else {
-        button.innerHTML = '<i class="fas fa-check"></i>'; 
-        button.style.color = '#4CAF50';
+        console.log("Success!");
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.style.backgroundColor = '#4CAF50'; 
         input.value = 'Subscribed!';
         input.disabled = true;
     }
@@ -87,7 +92,10 @@ async function handleNewsletter(e) {
 
 const newsletterForm = document.querySelector('.newsletter-form');
 if (newsletterForm) {
-    newsletterForm.onsubmit = handleNewsletter;
+    newsletterForm.addEventListener('submit', handleNewsletter);
+    console.log("Newsletter listener attached successfully.");
+} else {
+    console.error("Could not find .newsletter-form in HTML");
 }
 
 
