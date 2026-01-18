@@ -1060,3 +1060,18 @@ body {
         height: 60px !important;
         margin-bottom: 5px !important;
     }
+
+    article.section-padding {
+        margin-top: 4.5rem !important; 
+        
+        padding-top: 1rem !important; 
+        
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    article header {
+        margin-top: 1rem !important;
+        margin-bottom: 1.5rem !important; 
+        padding-bottom: 1rem !important; 
+    }
