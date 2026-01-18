@@ -46,28 +46,41 @@
                 </div>
 
                 <div class="filters-row">
-                    
-                    <div class="tags-container">
-                        <button class="filter-tag active" data-tag="all">All</button>
-                        <button class="filter-tag" data-tag="security">Security</button>
-                        <button class="filter-tag" data-tag="code">Code</button>
-                        <button class="filter-tag" data-tag="politics">Politics</button>
-                        <button class="filter-tag" data-tag="other">Other</button>
-                    </div>
+    
+    <div class="tags-container">
+        <button class="filter-tag active" data-tag="all">All</button>
+        <button class="filter-tag" data-tag="security">Security</button>
+        <button class="filter-tag" data-tag="code">Code</button>
+        <button class="filter-tag" data-tag="politics">Politics</button>
+        <button class="filter-tag" data-tag="other">Other</button>
+    </div>
 
-                    <div class="custom-dropdown" id="customSort">
-                        <div class="dropdown-trigger">
-                            <span id="currentSort">Sort: Newest</span>
-                            <i class="fas fa-chevron-down arrow-icon"></i>
-                        </div>
-                        <ul class="dropdown-options">
-                            <li data-value="newest" class="active-option">Sort: Newest</li>
-                            <li data-value="oldest">Sort: Oldest</li>
-                            <li data-value="az">Sort: A-Z</li>
-                        </ul>
-                    </div>
+    <div class="custom-dropdown mobile-only-dropdown" id="mobileFilterDrop">
+        <div class="dropdown-trigger">
+            <span>Filter: All</span> <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <ul class="dropdown-options">
+            <li onclick="selectMobileFilter('all', 'All')">All</li>
+            <li onclick="selectMobileFilter('security', 'Security')">Security</li>
+            <li onclick="selectMobileFilter('code', 'Code')">Code</li>
+            <li onclick="selectMobileFilter('politics', 'Politics')">Politics</li>
+            <li onclick="selectMobileFilter('other', 'Other')">Other</li>
+        </ul>
+    </div>
 
-                </div>
+    <div class="custom-dropdown" id="customSort">
+        <div class="dropdown-trigger">
+            <span id="currentSort">Sort: Newest</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <ul class="dropdown-options">
+            <li data-value="newest" class="active-option">Sort: Newest</li>
+            <li data-value="oldest">Sort: Oldest</li>
+            <li data-value="az">Sort: A-Z</li>
+        </ul>
+    </div>
+
+</div>
 
             <div class="project-grid" id="blogGrid">
                 
@@ -116,6 +129,43 @@
         menu.classList.toggle('open');
         hamburgerIcon.classList.toggle('open');
     }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        const mobileFilter = document.getElementById('mobileFilterDrop');
+        
+        if (mobileFilter) {
+            mobileFilter.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!mobileFilter.contains(e.target)) {
+                    mobileFilter.classList.remove('open');
+                }
+            });
+        } else {
+            console.log("Error: Could not find #mobileFilterDrop");
+        }
+
+        window.selectMobileFilter = function(tagValue, displayName) {
+            
+            if (mobileFilter) {
+                const label = mobileFilter.querySelector('.dropdown-trigger span');
+                if (label) label.innerText = "Filter: " + displayName;
+            }
+
+            const desktopBtn = document.querySelector(`.filter-tag[data-tag="${tagValue}"]`);
+            
+            if (desktopBtn) {
+                desktopBtn.click(); 
+            } else {
+                console.log("Error: Could not find desktop button for " + tagValue);
+            }
+        };
+    });
 </script>
 </body>
 </html>
