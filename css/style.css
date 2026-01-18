@@ -862,3 +862,27 @@ body {
         letter-spacing: 1px;
     }
 }
+
+/* --- CORRECTED CSS FIX --- */
+@media (max-width: 768px) {
+    #loader {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 2147483647 !important;
+        background: #000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Target the text inside #loader */
+    #loader h1, #loader .glitch {
+        transform: scale(0.3) !important; /* Shrink to 30% */
+        white-space: nowrap !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+}
