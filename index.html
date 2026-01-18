@@ -71,48 +71,5 @@
         hamburgerIcon.classList.toggle('open');
     }
 </script>
-<script>
-    window.addEventListener('load', function() {
-        // Only run on mobile
-        if (window.innerWidth < 768) {
-            
-            // 1. Target the Loader Text using the CORRECT ID
-            // We look inside #loader now
-            var loaderText = document.querySelector('#loader h1') || 
-                             document.querySelector('#loader .glitch') ||
-                             document.querySelector('.loader-text');
-            
-            // 2. The "Crusher" - Force styles directly
-            if (loaderText) {
-                // Force it to be tiny text (20px)
-                loaderText.style.setProperty('font-size', '20px', 'important');
-                
-                // Force it to scale down to 30% size just to be sure
-                loaderText.style.transform = 'scale(0.3)';
-                
-                // Force it to stay on one line
-                loaderText.style.whiteSpace = 'nowrap';
-                loaderText.style.width = '100%';
-                loaderText.style.textAlign = 'center';
-                loaderText.style.margin = '0';
-            }
-            
-            // 3. Force the container to cover the navbar
-            var loaderBox = document.getElementById('loader'); // CORRECTED ID
-            if (loaderBox) {
-                loaderBox.style.zIndex = '2147483647'; // Max Z-Index
-                loaderBox.style.position = 'fixed';
-                loaderBox.style.top = '0';
-                loaderBox.style.left = '0';
-                loaderBox.style.width = '100%';
-                loaderBox.style.height = '100%';
-                loaderBox.style.display = 'flex';
-                loaderBox.style.justifyContent = 'center';
-                loaderBox.style.alignItems = 'center';
-                loaderBox.style.backgroundColor = '#000000';
-            }
-        }
-    });
-</script>
 </body>
 </html>
