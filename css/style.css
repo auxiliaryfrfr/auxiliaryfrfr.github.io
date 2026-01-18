@@ -863,9 +863,8 @@ body {
     }
 }
 
-/* --- MOBILE LOADER: ANIMATED & SIZED --- */
+/* MOBILE LOADING SCREEN */
     
-    /* 1. The Container: Needs 'transition' to fade out smoothly */
     #splash-screen {
         position: fixed !important;
         top: 0; left: 0;
@@ -877,47 +876,39 @@ body {
         justify-content: center !important;
         align-items: center !important;
         
-        /* THIS LINE WAS MISSING: Allows the fade-out to happen */
         transition: opacity 0.8s ease-out, visibility 0.8s !important;
-        opacity: 1; /* Start visible */
+        opacity: 1; 
     }
 
-    /* 2. The Text: Needs 'animation' to fade in */
     #splash-screen h1 {
-        font-size: 10vw !important; /* Keep it small */
+        font-size: 10vw !important; 
         width: 100% !important;
         text-align: center !important;
         white-space: nowrap !important;
         margin: 0 !important;
         
-        /* RE-ENABLE THE ANIMATION */
-        /* We use the same 'scaleUp' animation as desktop */
         animation: scaleUp 2s ease-in-out forwards !important; 
     }
 
-    /* 3. The "Hidden" State (Triggered by JS) */
     #splash-screen.hidden {
-        opacity: 0 !important; /* Triggers the fade out */
+        opacity: 0 !important; 
         visibility: hidden !important;
         pointer-events: none !important;
         z-index: -1 !important;
     }
 
-    /* --- DESKTOP SHIELD (Fixes the PC Version) --- */
 @media (min-width: 769px) {
     
-    /* 1. Force the Text back to normal size */
     #splash-screen h1 {
-        font-size: 4rem !important; /* The original desktop size */
-        animation: scaleUp 2s ease-in-out forwards !important; /* Restore the cool animation */
-        transform: none !important; /* Stop the mobile shrink-ray */
+        font-size: 4rem !important; 
+        animation: scaleUp 2s ease-in-out forwards !important;
+        transform: none !important; 
         white-space: normal !important;
         width: auto !important;
     }
 
-    /* 2. Ensure the container behaves normally */
     #splash-screen {
-        z-index: 9999 !important; /* Reset to original layer */
+        z-index: 9999 !important; 
         background-color: #000 !important;
     }
 }
