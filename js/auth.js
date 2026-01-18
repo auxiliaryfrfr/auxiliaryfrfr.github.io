@@ -193,3 +193,59 @@ document.addEventListener('click', function(e) {
 });
 
 checkUser();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('lightModeToggle');
+    
+    const lightmodelist = [
+        "MY EYES",
+        "We don't do that here",
+        "Nuh uh",
+        "Absolutely not",
+        "Psht, no",
+        "Who hurt you?",
+        "Fuh naw",
+        "Oh hell no",
+        "Not today, Satan",
+        "Not while I'm alive",
+        "You wish",
+        "In your dreams",
+        "Try again",
+        "Over my dead body",
+        "Keep dreaming",
+        "Fat chance",
+        "Out of the question",
+        "Not a chance in hell",
+        "Not in a million years",
+        "Yeah, right",   
+    ];
+
+    if (toggle) {
+        toggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                let snark = document.querySelector('.snark-text');
+                if (!snark) {
+                    snark = document.createElement('span');
+                    snark.className = 'snark-text';
+                    e.target.parentElement.parentElement.appendChild(snark);
+                }
+
+                setTimeout(() => {
+                    e.target.checked = false;
+
+                    const slider = e.target.nextElementSibling;
+                    slider.classList.add('shake-reject');
+                    setTimeout(() => slider.classList.remove('shake-reject'), 400);
+
+                    snark.innerText = lightmodelist[Math.floor(Math.random() * lightmodelist.length)];
+                    snark.classList.add('visible');
+
+                    setTimeout(() => {
+                        snark.classList.remove('visible');
+                    }, 2000);
+                    
+                }, 200); 
+            }
+        });
+    }
+});

@@ -1474,3 +1474,32 @@ input:checked + .slider:before {
     transform: scale(0.98);
     box-shadow: 0 0 5px rgba(255, 85, 85, 0.8);
 }
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(5px); }
+  50% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake-reject {
+  animation: shake 0.3s ease-in-out;
+  background-color: #ff5555 !important; 
+}
+
+.snark-text {
+    position: absolute;
+    right: 80px; 
+    font-size: 0.8rem;
+    color: #bbbbbb;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.snark-text.visible {
+    opacity: 1;
+}
