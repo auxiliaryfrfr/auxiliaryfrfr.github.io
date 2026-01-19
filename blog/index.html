@@ -116,13 +116,19 @@
                 </div>
 
                 <div class="filters-row">
-    
-    <div class="tags-container">
-        <button class="filter-tag active" data-tag="all">All</button>
-        <button class="filter-tag" data-tag="security">Security</button>
-        <button class="filter-tag" data-tag="code">Code</button>
-        <button class="filter-tag" data-tag="politics">Politics</button>
-        <button class="filter-tag" data-tag="other">Other</button>
+
+    <div class="custom-dropdown" id="filterDropdown">
+        <div class="dropdown-trigger">
+            <span id="currentFilter">Filter: All</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <ul class="dropdown-options">
+            <li data-tag="all" class="active-option">All</li>
+            <li data-tag="security">Security</li>
+            <li data-tag="code">Code</li>
+            <li data-tag="politics">Politics</li>
+            <li data-tag="other">Other</li>
+        </ul>
     </div>
 
     <div class="custom-dropdown mobile-only-dropdown" id="mobileFilterDrop">
