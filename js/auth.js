@@ -8,6 +8,8 @@ async function checkUser() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         updateUI(session.user);
+    } else {
+        handleGuestUser();
     }
 }
 
@@ -258,3 +260,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function handleGuestUser() {
+    if (!window.location.href.includes('/blog/')) return;
+
+    if (sessionStorage.getItem('toastDismissed')) return;
+
+    setTimeout(() => {
+        const toast = document.getElementById('systemToast');
+        if (toast) toast.classList.add('visible');
+    }, 4000);
+}
+
+function closeToast() {
+    const toast = document.getElementById('systemToast');
+    if (toast) {
+        toast.classList.remove('visible');
+        sessionStorage.setItem('toastDismissed', 'true');
+    }
+}

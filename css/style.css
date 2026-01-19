@@ -1503,3 +1503,121 @@ input:checked + .slider:before {
 .snark-text.visible {
     opacity: 1;
 }
+
+/* BLOG NOTIFICATION */
+
+.system-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(255, 128, 171, 0.3);
+    border-left: 4px solid #ff80ab;
+    padding: 15px 40px 15px 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 10000;
+    font-family: 'JetBrains Mono', monospace;
+    
+    transform: translateY(100px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    max-width: 320px;
+}
+
+.system-toast.visible {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.toast-icon {
+    font-size: 1.2rem;
+    color: #ff80ab;
+    animation: pulse 2s infinite;
+    margin-top: 2px;
+    min-width: 20px; 
+    text-align: center;
+}
+
+.toast-text h4 {
+    color: #fff;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.toast-text p {
+    color: #888;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    font-family: 'Inter', sans-serif;
+}
+
+.toast-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 15px;
+    margin-left: 35px; 
+}
+
+.btn-toast-login {
+    background: #5865F2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-toast-login:hover {
+    background: #4752C4;
+    box-shadow: 0 0 10px rgba(88, 101, 242, 0.5);
+}
+
+.btn-toast-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #666;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+}
+
+.btn-toast-close:hover {
+    color: #ff5555;
+    background: rgba(255, 85, 85, 0.1);
+}
+
+@media (max-width: 768px) {
+    .system-toast {
+        right: 5%;
+        left: 5%;
+        bottom: 20px;
+        width: 90%;
+        max-width: none;
+    }
+}
