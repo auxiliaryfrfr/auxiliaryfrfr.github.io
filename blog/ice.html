@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Trump's Monster</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="icon" href="../images/blog.svg" type="image/svg+xml">
+    <meta property="og:title" content="AUXILIARYFRFR - Blog Logs | Trump's Monster">
+    <meta property="og:description" content="ICE has been causing massive problems all over the United States, and we need to talk about it.">
+    <meta property="og:image" content="https://auxiliaryfrfr.com/images/embed.png">
+    <meta name="theme-color" content="#ff80ab"> 
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+    <nav class="glass-nav">
+        <div class="nav-left-group">
+            <div class="logo">AUXILIARYFRFR</div>
+            <ul class="nav-links desktop-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="index.html" class="active">Blog</a></li>
+                <li><a href="../projects/">Projects</a></li>
+                <li><a href="../socials/">Socials</a></li>
+                <li><a href="../dash/" class="cyber-link">/dash</a></li>
+            </ul>
+        </div>
+        <div class="nav-right-group">
+            <div class="profile-trigger glass-panel" id="profileTrigger" onclick="toggleProfileMenu()">
+                <img src="../images/default-user.png" alt="Profile" class="profile-pic">
+            </div>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+        <div class="profile-dropdown glass-panel" id="profileMenu">
+            <div class="auth-section" id="authSection">
+                <button class="btn-auth login-btn" onclick="simulateLogin()">
+                    <i class="fab fa-discord"></i> Log In with Discord
+                </button>
+                <div class="user-info hidden" id="userInfo">
+                    <div class="user-details">
+                        <img src="../images/default-user.png" class="mini-avatar"> 
+                        <span class="user-name">User</span>
+                    </div>
+                    <button class="btn-logout-full" onclick="simulateLogout()">
+                        <i class="fas fa-power-off"></i> Log Out
+                    </button>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="settings-section">
+                <h4><i class="fas fa-sliders-h"></i> Settings</h4>
+                <div class="setting-item">
+                    <span>Light Mode</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="lightModeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="newsletter-section">
+                <h4><i class="fas fa-broadcast-tower"></i> Notifications</h4>
+                <div class="locked-wrapper locked" id="newsletterWrapper">
+                    <div class="lock-overlay">
+                        <i class="fas fa-lock"></i>
+                        <span>Login Required</span>
+                    </div>
+                    <p class="newsletter-sub">Get notified when new blogs drop.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="user@domain.com" required>
+                        <button type="submit"><i class="fas fa-chevron-right"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="active">Blog</a>
+        <a href="../projects/">Projects</a>
+        <a href="../socials/">Socials</a>
+    </div>
+
+    <div id="app-container">
+        
+        <article class="section-padding" style="margin-top: 6rem; max-width: 800px;">
+            
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Return to Logs
+            </a>
+
+            <header style="margin-top: 2rem; margin-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem;">
+                
+                <h1 class="long-title" style="font-size: 3rem; line-height: 1.2; margin-bottom: 1rem;">Trump's Monster</h1>
+                
+                <div class="meta-row">
+                    <p class="post-meta" style="margin-bottom: 0;">JAN 20, 2026 • 15 MIN READ</p>
+                    <span class="tag">Politics</span>
+                </div>
+
+            </header>
+
+            <div class="blog-content" style="line-height: 1.8; font-size: 1.1rem; color: #ddd;">
+                
+                <div class="blog-header-image-container">
+                    <img src="https://auxiliaryfrfr.com/images/ice.webp" alt="Banksy Mural" class="blog-header-img">
+                    <p class="img-caption">London, The Royal Courts of Justice, Banksy's mural showing a judge striking a protester with a gavel.</p>
+                </div>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>
+                        This is a trigger warning. Before you read this blog, please be aware that the following text may contain mentions of, but not limited to, cursing, <span class="spoiler" onclick="toggleSpoiler(this)">murder</span>, and <span class="spoiler" onclick="toggleSpoiler(this)">rape.</span>
+                    </p>
+                </div>
+
+                <p>At first, I was thinking that I'd start my first writing piece on this website with something silly, wholesome, nothing that takes much time to talk about or read. My thought process was that it'd be easy and fast for both the reader and I.</p>
+                <br>
+                <p>However, after seeing more and more of these horrid ghastly scenes popping up on my feed, which are basically everywhere now, I knew that I had to address it properly, because we must recognise it as the truly despicable situation that it is.</p>
+                <br>
+                <p>This, unfortunately, means that this text will contain painful topics for some, including myself. But, politics isn't supposed to be fun, or optional for that matter. The very fact that you are living and breathing obligates you to educate yourself about what is right and wrong, and to then educate others about it as well.</p>
+                <br>
+                
+                <div class="quote-box">
+                    <p>
+                        <span class="poem-line">First they came for the Communists and I did not speak out Because I was not a Communist</span>
+                        <span class="poem-line">Then they came for the socialists and I did not speak out Because I was not a Socialist</span>
+                        <span class="poem-line">Then they came for the trade unionists and I did not speak out because I was not a trade unionist</span>
+                        <span class="poem-line">Then they came for the Jews and I did not speak out because I was not a Jew</span>
+                        <span class="poem-line">Then they came for me and there was no one left to speak out for me</span>
+                    </p>
+                    <span class="quote-author">- Martin Niemöller</span>
+                    <a href="https://en.wikipedia.org/wiki/First_They_Came" target="_blank" class="quote-source"><i class="fas fa-external-link-alt"></i> Source</a>
+                </div>
+                <br>
+
+                <p>For anyone living under a rock, the Immigration and Customs Enforcement, better known as ICE, is the result of the merging of 2 customs and immigration services in 2003. (<a href="https://www.ice.gov/about-ice" target="_blank">About ICE <i class="fas fa-external-link-alt"></i></a>)</p>
+                <br>
+                <p>So, why is an organization that was functionally created under George W. Bush getting into so many headlines now in 2026? We're not here for any short answers, so let's get straight into it.</p>
+                <br>
+                <p>The fact is that ICE has actually been causing serious abuses since it was made, but what ended up happening is that Trump has turned it into something uniquely monstrous, as we can clearly see that it has become far more visible, aggressive, and ideologically empowered.</p>
+                <br>
+                <p>A much more fitting definition of what ICE is, made by me after considering all of the facts, is that they're essentially a major paramilitary organization in practice, whose efforts work to serve as an instrument of terror based on a racist ideology, in order to kidnap illegal immigrants and put them in concentration camps across the country. An almost word for word definition for the Schutzstaffel, better known as the SS under Adolf Hitler in what was Nazi Germany. (<a href="https://en.wikipedia.org/wiki/Schutzstaffel" target="_blank">Wikipedia: SS <i class="fas fa-external-link-alt"></i></a>)</p>
+                <br>
+                <p>Now, I know what some of you might be thinking, comparing them to these Nazi-built ideas is just overexaggerating, right? I'm here to tell you now, it fucking isn't. I will cover an extremely small portion of everything they have done as of today. Mind you, what follows is not an opinion, but documented common practices carried out by ICE:</p>
+                
+                <ol style="margin-left: 2rem; margin-top: 1rem; color: #bbb;">
+                    <li style="margin-bottom: 0.5rem;">Multiple cases of <span class="spoiler" onclick="toggleSpoiler(this)">sexual assault and abuses</span>. (<a href="https://www.wdtv.com/2025/12/29/detention-officer-admits-sexually-abusing-detainee-ice-facility/" target="_blank">Source <i class="fas fa-external-link-alt"></i></a>)</li>
+                    
+                    <li style="margin-bottom: 0.5rem;">Removing "<span class="spoiler" onclick="toggleSpoiler(this)">Rape</span> Protections" for trans immigrants. (<a href="https://prospect.org/2026/01/14/ice-trump-rape-protection-trans-immigrants/" target="_blank">Source <i class="fas fa-external-link-alt"></i></a>)</li>
+                    
+                    <li style="margin-bottom: 0.5rem;">Multiple cases of kidnapping and detaining U.S. citizens without warrants (<a href="https://www.youtube.com/watch?v=nX7I4znDOKk" target="_blank">Video <i class="fab fa-youtube"></i></a>)</li>
+                    
+                    <li style="margin-bottom: 0.5rem;">Multiple cases of illegal use of lethal force used on peaceful protestors (<a href="https://www.youtube.com/watch?v=QTYKz5HfJ6U" target="_blank">Video <i class="fab fa-youtube"></i></a>)</li>
+                    
+                    <li style="margin-bottom: 0.5rem;">Use of tear gas against children stuck in a van (<a href="https://www.youtube.com/watch?v=r8G_H9Nn-Co" target="_blank">Video <i class="fab fa-youtube"></i></a>)</li>
+
+                    <li style="margin-bottom: 0.5rem;">The <span class="spoiler" onclick="toggleSpoiler(this)">killing</span> of Renée Good (<a href="https://en.wikipedia.org/wiki/Killing_of_Renee_Good" target="_blank">Source <i class="fas fa-external-link-alt"></i></a>)</li>
+
+                </ol>
+                <br>
+                <p>This very minuscule sample of countless many others is only the tip of the iceberg. There is so much more that if I wanted to incorporate in this one blog article, it'd probably take up the entire website's data. For this reason, I encourage you to do your own research, educate others, and most importantly, speak up for those who can't.</p>
+            </div>
+
+        </article>
+
+        <footer class="glass-footer">
+            <div class="status-indicator">
+                <span class="dot online"></span>
+                <span class="status-text">System Status: 99.98% Uptime</span>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 auxiliaryfrfr. MIT License.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="systemToast" class="system-toast">
+    <button class="btn-toast-close" onclick="closeToast()">
+        <i class="fas fa-times"></i>
+    </button>
+
+    <div class="toast-content">
+        <div class="toast-icon">
+            <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <div class="toast-text">
+            <h4>Want notifications?</h4>
+            <p>Log in to auto-subscribe to new blogs!</p>
+        </div>
+    </div>
+    <div class="toast-actions">
+        <button class="btn-toast-login" onclick="simulateLogin()">
+            <i class="fab fa-discord"></i> Log In
+        </button>
+        </div>
+</div>
+
+    <script>
+        function toggleSpoiler(element) {
+            element.classList.toggle('revealed');
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>
