@@ -67,6 +67,15 @@ async function checkSubscriptionStatus(user) {
         }
     }
 
+    const hasHandledAutoSub = localStorage.getItem(`autosub_${user.id}`);
+    if (!hasHandledAutoSub) {
+        await supabaseClient.from('subscribers').insert({
+            email: user.email,
+            user_uuid: user.id
+        });
+        localStorage.setItem(`autosub_${user.id}`, 'true');
+    }
+
     const { data } = await supabaseClient
         .from('subscribers')
         .select('*')
