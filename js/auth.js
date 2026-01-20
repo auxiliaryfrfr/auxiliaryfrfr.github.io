@@ -4,6 +4,10 @@ const SUPABASE_KEY = 'sb_publishable_FBcAuoqWgHlZch1XmgWEwA_WKF0JIwE';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
+window.addEventListener('load', () => {
+    checkUser();
+});
+
 async function checkUser() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
@@ -78,17 +82,23 @@ async function checkSubscriptionStatus(user) {
     if (data) {
         setSubscribeState('subscribed');
     } else {
-        const { error: insertError } = await supabaseClient
-            .from('subscribers')
-            .insert({
-                email: user.email,
-                user_uuid: user.id
-            });
-        
-        if (!insertError) {
-            setSubscribeState('subscribed');
+        const hasOptedOut = user.user_metadata.unsubscribed_newsletter === true;
+
+        if (!hasOptedOut) {
+            const { error: insertError } = await supabaseClient
+                .from('subscribers')
+                .insert({
+                    email: user.email,
+                    user_uuid: user.id
+                });
+            
+            if (!insertError) {
+                setSubscribeState('subscribed');
+            } else {
+                console.error("Auto-sub failed:", insertError);
+            }
         } else {
-            console.error("Auto-sub failed:", insertError);
+            setSubscribeState('unsubscribed');
         }
     }
 }
@@ -108,9 +118,12 @@ async function handleNewsletter(e) {
         const { error } = await supabaseClient
             .from('subscribers')
             .delete()
-            .eq('email', user.email); 
+            .eq('email', user.email);
 
         if (!error) {
+            await supabaseClient.auth.updateUser({
+                data: { unsubscribed_newsletter: true }
+            });
             setSubscribeState('unsubscribed');
         } else {
             console.error(error);
@@ -148,6 +161,9 @@ async function handleNewsletter(e) {
             button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
         }, 2000);
     } else {
+        await supabaseClient.auth.updateUser({
+            data: { unsubscribed_newsletter: false }
+        });
         setSubscribeState('subscribed');
     }
 }
@@ -213,10 +229,6 @@ document.addEventListener('click', function(e) {
         profileMenu.classList.remove('open');
         profileTrigger.classList.remove('active');
     }
-});
-
-window.addEventListener('load', () => {
-    checkUser();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
