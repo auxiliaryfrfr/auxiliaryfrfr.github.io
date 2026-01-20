@@ -69,23 +69,27 @@ async function checkSubscriptionStatus(user) {
         }
     }
 
-    const hasHandledAutoSub = localStorage.getItem(`autosub_${user.id}`);
-    if (!hasHandledAutoSub) {
-        await supabaseClient.from('subscribers').insert({
-            email: user.email,
-            user_uuid: user.id
-        });
-        localStorage.setItem(`autosub_${user.id}`, 'true');
-    }
-
-    const { data } = await supabaseClient
+    const { data, error } = await supabaseClient
         .from('subscribers')
         .select('*')
-        .eq('user_uuid', user.id)
-        .single();
+        .eq('email', user.email) 
+        .maybeSingle();
 
     if (data) {
         setSubscribeState('subscribed');
+    } else {
+        const { error: insertError } = await supabaseClient
+            .from('subscribers')
+            .insert({
+                email: user.email,
+                user_uuid: user.id
+            });
+        
+        if (!insertError) {
+            setSubscribeState('subscribed');
+        } else {
+            console.error("Auto-sub failed:", insertError);
+        }
     }
 }
 
@@ -104,7 +108,7 @@ async function handleNewsletter(e) {
         const { error } = await supabaseClient
             .from('subscribers')
             .delete()
-            .eq('user_uuid', user.id);
+            .eq('email', user.email); 
 
         if (!error) {
             setSubscribeState('unsubscribed');
@@ -118,6 +122,17 @@ async function handleNewsletter(e) {
 
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
+    const { data: existingUser } = await supabaseClient
+        .from('subscribers')
+        .select('email')
+        .eq('email', user.email)
+        .maybeSingle();
+
+    if (existingUser) {
+        setSubscribeState('subscribed');
+        return;
+    }
+
     const { error } = await supabaseClient
         .from('subscribers')
         .insert({ 
@@ -128,15 +143,10 @@ async function handleNewsletter(e) {
     if (error) {
         console.error("Supabase Error:", error);
         button.innerHTML = '<i class="fas fa-times"></i>'; 
-        
-        if (error.code === '23505') {
-            setSubscribeState('subscribed');
-        } else {
-            alert('Error: ' + error.message);
-            setTimeout(() => { 
-                button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
-            }, 2000);
-        }
+        alert('Error: ' + error.message);
+        setTimeout(() => { 
+            button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
+        }, 2000);
     } else {
         setSubscribeState('subscribed');
     }
@@ -146,6 +156,8 @@ function setSubscribeState(state) {
     const form = document.querySelector('.newsletter-form');
     const input = document.querySelector('.newsletter-form input');
     const button = document.querySelector('.newsletter-form button');
+
+    if (!form || !input || !button) return;
 
     if (state === 'subscribed') {
         form.classList.add('success');
@@ -203,32 +215,19 @@ document.addEventListener('click', function(e) {
     }
 });
 
-checkUser();
+window.addEventListener('load', () => {
+    checkUser();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('lightModeToggle');
     
     const lightmodelist = [
-        "MY EYES",
-        "We don't do that here",
-        "Nuh uh",
-        "Absolutely not",
-        "Psht, no",
-        "Who hurt you?",
-        "Fuh naw",
-        "Oh hell no",
-        "Not today, Satan",
-        "Not while I'm alive",
-        "You wish",
-        "In your dreams",
-        "Try again",
-        "Over my dead body",
-        "Keep dreaming",
-        "Fat chance",
-        "Out of the question",
-        "Not a chance in hell",
-        "Not in a million years",
-        "Yeah, right",   
+        "MY EYES", "We don't do that here", "Nuh uh", "Absolutely not",
+        "Psht, no", "Who hurt you?", "Fuh naw", "Oh hell no",
+        "Not today, Satan", "Not while I'm alive", "You wish", "In your dreams",
+        "Try again", "Over my dead body", "Keep dreaming", "Fat chance",
+        "Out of the question", "Not a chance in hell", "Not in a million years", "Yeah, right"
     ];
 
     if (toggle) {

@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
+    const filterTags = document.querySelectorAll('.filter-tag');
     const blogGrid = document.getElementById('blogGrid');
     const posts = Array.from(document.querySelectorAll('.blog-post'));
     const noResults = document.getElementById('noResults');
     
-    const sortDropdown = document.getElementById('customSort');
-    const sortTrigger = sortDropdown.querySelector('.dropdown-trigger');
-    const sortText = document.getElementById('currentSort');
-    const sortOptions = sortDropdown.querySelectorAll('.dropdown-options li');
+    const dropdown = document.getElementById('customSort');
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const currentSortText = document.getElementById('currentSort');
+    const options = dropdown.querySelectorAll('.dropdown-options li');
 
     const filterDropdown = document.getElementById('filterDropdown');
     const filterTrigger = filterDropdown ? filterDropdown.querySelector('.dropdown-trigger') : null;
@@ -65,22 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
         visiblePosts.forEach(post => blogGrid.appendChild(post));
     }
 
-
-    sortTrigger.addEventListener('click', (e) => {
+    
+    trigger.addEventListener('click', (e) => {
         e.stopPropagation();
-        sortDropdown.classList.toggle('open');
+        dropdown.classList.toggle('open');
         if(filterDropdown) filterDropdown.classList.remove('open'); 
     });
 
-    sortOptions.forEach(option => {
+    options.forEach(option => {
         option.addEventListener('click', () => {
-            sortOptions.forEach(opt => opt.classList.remove('active-option'));
+            options.forEach(opt => opt.classList.remove('active-option'));
             option.classList.add('active-option');
 
-            sortText.textContent = option.textContent;
+            currentSortText.textContent = option.textContent;
             currentSortValue = option.getAttribute('data-value');
             
-            sortDropdown.classList.remove('open');
+            dropdown.classList.remove('open');
             sortPosts();
         });
     });
@@ -98,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.classList.add('active-option');
 
                 filterText.textContent = "Filter: " + option.innerText;
-                
                 currentTag = option.getAttribute('data-tag');
                 
                 filterDropdown.classList.remove('open');
@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('click', (e) => {
-        if (!sortDropdown.contains(e.target)) {
-            sortDropdown.classList.remove('open');
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
         }
         if (filterDropdown && !filterDropdown.contains(e.target)) {
             filterDropdown.classList.remove('open');
@@ -117,4 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     searchInput.addEventListener('input', filterPosts);
+
+    sortPosts();
 });
