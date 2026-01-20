@@ -104,7 +104,8 @@ async function checkSubscriptionStatus(user) {
 }
 
 async function handleNewsletter(e) {
-    e.preventDefault();
+    e.preventDefault(); 
+    
     const button = document.querySelector('.newsletter-form button');
     
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -197,10 +198,9 @@ function setSubscribeState(state) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const newsletterForm = document.querySelector('.newsletter-form');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', handleNewsletter);
+document.addEventListener('submit', (e) => {
+    if (e.target && e.target.classList.contains('newsletter-form')) {
+        handleNewsletter(e);
     }
 });
 
