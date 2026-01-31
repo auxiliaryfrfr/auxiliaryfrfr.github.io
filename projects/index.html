@@ -14,35 +14,153 @@
     <meta property="og:description" content="Look at my various projects!">
     <meta name="theme-color" content="#ff80ab"> <meta property="og:image" content="https://auxiliaryfrfr.com/images/embed.png">
     <meta name="twitter:card" content="summary_large_image">
+
+    <style>
+        .desktop-only-msg {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            text-align: left;
+        }
+
+        .project-card {
+            background: rgba(15, 15, 15, 0.6);
+            border: 1px solid #333;
+            padding: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid transparent;
+        }
+
+        .project-card:hover {
+            border-left-color: #ff80ab;
+            box-shadow: 0 4px 20px rgba(255, 128, 171, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .project-card:hover .card-icon {
+            color: #fff;
+        }
+
+        .status-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .status-badge.online { color: #ff80ab; border-color: rgba(255, 128, 171, 0.3); }
+
+        .card-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: #fff;
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+        }
+
+        .card-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #888;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .card-link-text {
+            margin-top: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        
+        .project-card:hover .card-link-text {
+            color: #ff80ab;
+        }
+    </style>
 </head>
 <body>
 
     <div id="app-container">
         <section class="section-padding empty-state-container">
-    <div class="empty-icon">
-        <i class="fas fa-lock"></i>
-    </div>
+            
+            <div class="desktop-only-msg">
+                <h2 class="section-title">PROJECT <span class="pink-glow">DIRECTORY</span></h2>
+                
+                <div class="project-grid">
+                    
+                    <a href="radio.html" class="project-card">
+                        <div class="card-header">
+                            <i class="fas fa-broadcast-tower card-icon"></i>
+                            <span class="status-badge online">● Live</span>
+                        </div>
+                        <h3 class="card-title">THE RADIO</h3>
+                        <p class="card-desc">Play some of the best music live on the website!</p>
+                        <div class="card-link-text">
+                            START <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+                        </div>
+                    </a>
 
-    <div class="desktop-only-msg">
-        <h2 class="section-title">NO PUBLIC <span class="pink-glow">RECORDS</span></h2>
-        <p style="color: #888; max-width: 400px; line-height: 1.6; margin: 1rem auto;">
-    The archives are currently empty or classified. 
-    <br>
-    Check back later for future projects.
-</p>
-    </div>
+                    <a href="wds.html" class="project-card online">
+                        <div class="card-header">
+                            <i class="fas fa-biohazard card-icon"></i>
+                            <span class="status-badge online">● Beta</span>
+                        </div>
+                        <h3 class="card-title">WORLD DESTRUCTION SIMULATOR</h3>
+                        <p class="card-desc">The fifth game in the Poland Destruction Simulator series, now going by a new name.</p>
+                        <div class="card-link-text">
+                            START <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+                        </div>
+                    </a>
 
-    <div class="mobile-only-msg">
-        <h2 class="section-title">DEVICE <span class="pink-glow">INCOMPATIBLE</span></h2>
-        <p style="color: #ff80ab; max-width: 90%; margin: 0 auto; line-height: 1.6;">
-            This section isn't available for mobile devices.
-            Please access this page via a personal computer for full visualization.
-        </p>
-    </div>
+                </div>
+            </div>
 
-    <br>
-    <a href="../index.html" class="btn btn-secondary">Return Home</a>
-</section>
+            <div class="mobile-only-msg">
+                <div class="empty-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="section-title">DEVICE <span class="pink-glow">INCOMPATIBLE</span></h2>
+                <p style="color: #ff80ab; max-width: 90%; margin: 0 auto; line-height: 1.6;">
+                    This section isn't available for mobile devices.
+                    Please access this page via a personal computer for full visualization.
+                </p>
+            </div>
+
+            <br>
+            <a href="../index.html" class="btn btn-secondary" style="margin-top: 3rem;">Return Home</a>
+        </section>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/components.js"></script>
