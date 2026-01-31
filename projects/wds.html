@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Destruction Simulator</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --holo-primary: #00ff9d; 
+            --holo-dim: rgba(0, 255, 157, 0.1);
+            --holo-glass: rgba(0, 20, 10, 0.85);
+            --holo-alert: #ff0055;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--holo-primary);
+            user-select: none; 
+        }
+
+        #game-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #particle-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        
+        #ui-container { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 50; 
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #hud-bar {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #timer-display {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.1);
+            text-shadow: 0 0 20px rgba(0,255,157,0.1);
+            pointer-events: none;
+            z-index: 100;
+            transition: color 0.2s;
+        }
+
+        #start-signal {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 50px var(--holo-primary);
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+            white-space: nowrap;
+        }
+        .signal-anim { animation: signalPop 0.8s ease-out forwards; }
+        @keyframes signalPop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+
+        .glass-panel {
+            background: var(--holo-glass);
+            border: 1px solid var(--holo-primary);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.15);
+            backdrop-filter: blur(8px);
+            max-width: 500px;
+            width: 90%;
+            pointer-events: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: bootUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            position: relative;
+        }
+
+        @keyframes bootUp { to { transform: translateY(0); opacity: 1; } }
+
+        .menu-title {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 0 0 15px var(--holo-primary);
+            letter-spacing: -2px;
+        }
+
+        .menu-btn {
+            display: block;
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--holo-dim);
+            color: var(--holo-primary);
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .menu-btn:hover {
+            background: var(--holo-primary);
+            color: #000;
+            border-color: var(--holo-primary);
+            box-shadow: 0 0 15px var(--holo-primary);
+        }
+
+        .btn-secondary-style {
+            border-color: #555;
+            color: #888;
+        }
+        .btn-secondary-style:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .login-btn-glow {
+            border-color: #7289da;
+            color: #fff;
+            background: rgba(114, 137, 218, 0.2);
+        }
+        .login-btn-glow:hover {
+            background: #7289da;
+            color: #fff;
+            box-shadow: 0 0 20px #7289da;
+        }
+
+        .profile-badge {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--holo-primary);
+            padding: 10px;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .lb-tabs { display: flex; gap: 10px; margin-bottom: 1rem; justify-content: center; }
+        .lb-tab {
+            background: transparent; border: 1px solid #333; color: #888;
+            padding: 5px 15px; cursor: pointer; font-family: inherit;
+        }
+        .lb-tab.active {
+            border-color: var(--holo-primary); color: var(--holo-primary);
+            background: var(--holo-dim);
+        }
+
+        .lb-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; text-align: left; }
+        .lb-table th { border-bottom: 1px solid var(--holo-primary); padding: 5px; opacity: 0.7; }
+        .lb-table td { padding: 8px 5px; border-bottom: 1px solid #333; }
+        .lb-rank { color: var(--holo-alert); font-weight: bold; width: 30px; }
+        .lb-score { text-align: right; color: #fff; }
+
+        .country { fill: rgba(0, 20, 10, 0.6); stroke: var(--holo-primary); stroke-width: 0.5px; transition: fill 0.1s; cursor: crosshair; }
+        .country:hover { fill: rgba(0, 255, 157, 0.15); }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 50%); background-size: 100% 4px; pointer-events: none; z-index: 99;"></div>
+    
+    <div id="start-signal">READY</div>
+
+    <div id="ui-container">
+        
+        <div id="menu-panel" class="glass-panel">
+            <h1 class="menu-title">WORLD DESTRUCTION SIMULATOR</h1>
+            
+            <div id="auth-section" class="profile-badge">
+                <div id="user-status" style="font-size: 0.8rem; color: #aaa;">INITIALIZING...</div>
+            </div>
+
+            <button class="menu-btn" onclick="startGame('10s')"><i class="fas fa-stopwatch"></i> BLITZ (10s)</button>
+            <button class="menu-btn" onclick="startGame('30s')"><i class="fas fa-hourglass-half"></i> ENDURANCE (30s)</button>
+            <button class="menu-btn" onclick="showLeaderboard()"><i class="fas fa-list"></i> LEADERBOARD</button>
+            
+            <button class="menu-btn btn-secondary-style" onclick="window.location.href='../projects/index.html'">
+                <i class="fas fa-arrow-left"></i> RETURN TO ARCHIVES
+            </button>
+        </div>
+
+        <div id="leaderboard-panel" class="glass-panel hidden">
+            <h2 style="margin-top:0;">TOP PLAYERS</h2>
+            <div class="lb-tabs">
+                <button class="lb-tab active" id="tab-10s" onclick="loadLeaderboardData('10s')">10s BLITZ</button>
+                <button class="lb-tab" id="tab-30s" onclick="loadLeaderboardData('30s')">30s ENDURANCE</button>
+            </div>
+            <div style="height: 250px; overflow-y: auto;">
+                <table class="lb-table">
+                    <thead><tr><th>#</th><th>PLAYER</th><th>TARGET</th><th>SCORE</th></tr></thead>
+                    <tbody id="lb-content"></tbody>
+                </table>
+                <div id="lb-loading" style="margin-top: 20px; font-size: 0.8rem; color: #888;">ACCESSING DATABASE...</div>
+            </div>
+            <button class="menu-btn" style="margin-top: 1rem;" onclick="hideLeaderboard()">BACK</button>
+        </div>
+
+        <div id="game-over-panel" class="glass-panel hidden">
+            <h2 style="color: var(--holo-alert); margin: 0;">SIMULATION ENDED</h2>
+            <div style="font-size: 4rem; font-weight: bold; margin: 1rem 0; color: #fff;" id="final-score">00000</div>
+            <p id="save-status" style="color: #888; font-size: 0.8rem; margin-bottom: 2rem;">AWAITING UPLOAD...</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="menu-btn" onclick="resetGame()">RETRY</button>
+                <button class="menu-btn" onclick="showLeaderboard()">LEADERBOARD</button>
+            </div>
+            <button class="menu-btn" style="border: none; margin-top: 0; font-size: 0.8rem;" onclick="location.reload()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <div id="hud-bar">
+        <div>
+            <div style="font-size: 0.8rem; color: #888;">TARGET</div>
+            <div id="target-name" style="font-size: 1.5rem; font-weight: bold;">---</div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 0.8rem; color: #888;">SCORE</div>
+            <div id="score-display" style="font-size: 1.5rem; color: var(--holo-primary);">00000</div>
+        </div>
+    </div>
+    
+    <div id="timer-display" class="hidden">10.00</div>
+
+    <div id="game-layer"></div>
+    <canvas id="particle-layer"></canvas>
+
+    <script src="../js/auth.js"></script>
+    
+    <script>
+        const width = window.innerWidth, height = window.innerHeight;
+        let gameState = 'MENU', gameMode = '10s', score = 0, timeRemaining = 0;
+        let gameLoop = null, activeCountry = null, currentUser = null;
+        const FORBIDDEN = ["Poland", "Ukraine", "Palestine", "Sudan", "State of Palestine"];
+
+        window.addEventListener('load', async () => {
+            if (typeof supabaseClient !== 'undefined') {
+                const { data } = await supabaseClient.auth.getSession();
+                currentUser = data.session?.user || null;
+                updateAuthUI();
+            } else {
+                console.warn("WDS: Supabase client not found in global scope.");
+            }
+        });
+
+        function updateAuthUI() {
+            const container = document.getElementById('auth-section');
+            const statusText = document.getElementById('user-status');
+            
+            const existingBtn = document.getElementById('login-btn');
+            if(existingBtn) existingBtn.remove();
+
+            if(currentUser) {
+                statusText.innerHTML = `PLAYER: <span style="color:#fff; font-weight:bold;">${currentUser.user_metadata.full_name || 'AGENT'}</span>`;
+                statusText.style.color = "var(--holo-primary)";
+                container.style.borderColor = "var(--holo-primary)";
+            } else {
+                statusText.innerText = "GUEST PLAYER";
+                statusText.style.color = "#888";
+                container.style.borderColor = "#555";
+                
+                const btn = document.createElement('button');
+                btn.id = 'login-btn';
+                btn.className = 'menu-btn login-btn-glow';
+                btn.innerHTML = '<i class="fab fa-discord"></i> LOGIN WITH DISCORD';
+                btn.style.marginTop = '10px';
+                btn.onclick = login;
+                container.appendChild(btn);
+            }
+        }
+
+        async function login() {
+            await supabaseClient.auth.signInWithOAuth({
+                provider: 'discord',
+                options: { redirectTo: window.location.href }
+            });
+        }
+
+        const svg = d3.select("#game-layer").append("svg").attr("width", width).attr("height", height);
+        const g = svg.append("g");
+        const projection = d3.geoMercator().scale(width / 6.5).translate([width / 2, height / 1.5]);
+        const path = d3.geoPath().projection(projection);
+        const zoom = d3.zoom().scaleExtent([1, 8])
+            .filter(() => gameState === 'SELECT' || gameState === 'PLAYING')
+            .on("zoom", (e) => g.attr("transform", e.transform));
+        svg.call(zoom);
+
+        d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(world => {
+            const countries = topojson.feature(world, world.objects.countries).features;
+            g.selectAll("path").data(countries).enter().append("path")
+                .attr("class", "country").attr("d", path).on("click", onCountryClick);
+        });
+
+        function startGame(mode) {
+            gameMode = mode;
+            gameState = 'SELECT';
+            document.getElementById('menu-panel').classList.add('hidden');
+            document.getElementById('hud-bar').style.opacity = 1;
+            alertUser("SELECT TARGET REGION");
+        }
+
+        function onCountryClick(event, d) {
+            if (gameState === 'MENU' || gameState === 'FINISHED') return;
+            
+            if (gameState === 'SELECT') {
+                if (FORBIDDEN.includes(d.properties.name)) {
+                    alertUser("I think they've had enough...", true);
+                    return;
+                }
+                activeCountry = d;
+                document.getElementById('target-name').innerText = d.properties.name.toUpperCase();
+                
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                const scale = Math.max(1, Math.min(8, 0.9 / Math.max((x1-x0)/width, (y1-y0)/height)));
+                const translate = [width/2 - scale*((x0+x1)/2), height/2 - scale*((y0+y1)/2)];
+
+                svg.transition().duration(1200)
+                    .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
+                    .on("end", playStartSequence);
+                return;
+            }
+
+            if (gameState === 'PLAYING' && d === activeCountry) {
+                score += 100;
+                document.getElementById('score-display').innerText = score.toString().padStart(5, '0');
+                spawnExplosion(...d3.pointer(event, document.body));
+            }
+        }
+
+        function playStartSequence() {
+            const signal = document.getElementById('start-signal');
+            
+            signal.innerText = "READY?";
+            signal.style.color = "#fff";
+            signal.classList.remove('signal-anim');
+            void signal.offsetWidth; 
+            signal.classList.add('signal-anim');
+
+            setTimeout(() => {
+                signal.innerText = "ATTACK!";
+                signal.style.color = "var(--holo-primary)";
+                signal.classList.remove('signal-anim');
+                void signal.offsetWidth;
+                signal.classList.add('signal-anim');
+                
+                setTimeout(beginCountdown, 500);
+            }, 800);
+        }
+
+        function beginCountdown() {
+            gameState = 'PLAYING';
+            timeRemaining = gameMode === '10s' ? 10 : 30;
+            const timerEl = document.getElementById('timer-display');
+            timerEl.classList.remove('hidden');
+            
+            gameLoop = setInterval(() => {
+                timeRemaining -= 0.1;
+                timerEl.innerText = timeRemaining.toFixed(2);
+                if(timeRemaining < 3) timerEl.style.color = "var(--holo-alert)";
+                else timerEl.style.color = "rgba(255,255,255,0.1)";
+
+                if (timeRemaining <= 0) gameOver();
+            }, 100);
+        }
+
+        function gameOver() {
+            clearInterval(gameLoop);
+            gameState = 'FINISHED';
+            document.getElementById('timer-display').classList.add('hidden');
+            document.getElementById('hud-bar').style.opacity = 0;
+            document.getElementById('game-over-panel').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score.toString().padStart(5, '0');
+            saveScore();
+        }
+
+        async function saveScore() {
+            const statusEl = document.getElementById('save-status');
+            if (!currentUser) {
+                statusEl.innerText = "GUEST PLAYER - DATA UNSAVED";
+                return;
+            }
+            statusEl.innerText = "UPLOADING...";
+            statusEl.style.color = "#888";
+
+            try {
+                const { error } = await supabaseClient.from('leaderboard_wds5').insert({
+                    user_id: currentUser.id,
+                    username: currentUser.user_metadata.full_name || "Unknown Agent",
+                    gamemode: gameMode,
+                    score: score,
+                    target_country: activeCountry.properties.name
+                });
+                if (error) throw error;
+                statusEl.innerText = "UPLOAD COMPLETE.";
+                statusEl.style.color = "var(--holo-primary)";
+            } catch (err) {
+                console.error(err);
+                statusEl.innerText = "UPLOAD FAILED (DB ERROR)";
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score-display').innerText = "00000";
+            document.getElementById('game-over-panel').classList.add('hidden');
+            svg.transition().duration(1000).call(zoom.transform, d3.zoomIdentity);
+            startGame(gameMode);
+        }
+
+        function showLeaderboard() {
+            document.getElementById('menu-panel').classList.add('hidden');
+            document.getElementById('game-over-panel').classList.add('hidden');
+            document.getElementById('leaderboard-panel').classList.remove('hidden');
+            loadLeaderboardData('10s');
+        }
+
+        function hideLeaderboard() {
+            document.getElementById('leaderboard-panel').classList.add('hidden');
+            if(gameState === 'FINISHED') document.getElementById('game-over-panel').classList.remove('hidden');
+            else document.getElementById('menu-panel').classList.remove('hidden');
+        }
+
+        async function loadLeaderboardData(mode) {
+            document.getElementById('tab-10s').className = mode === '10s' ? 'lb-tab active' : 'lb-tab';
+            document.getElementById('tab-30s').className = mode === '30s' ? 'lb-tab active' : 'lb-tab';
+            
+            const tbody = document.getElementById('lb-content');
+            const loading = document.getElementById('lb-loading');
+            tbody.innerHTML = '';
+            loading.classList.remove('hidden');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('leaderboard_wds5')
+                    .select('username, score, target_country')
+                    .eq('gamemode', mode)
+                    .order('score', { ascending: false })
+                    .limit(15);
+
+                loading.classList.add('hidden');
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: #555;">NO RECORDS FOUND</td></tr>';
+                    return;
+                }
+
+                data.forEach((row, index) => {
+                    const isYou = currentUser && row.username === currentUser.user_metadata.full_name;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="lb-rank">${index + 1}</td>
+                            <td style="${isYou ? 'color: var(--holo-primary)' : 'color: #fff'}">${row.username}</td>
+                            <td style="color: #888; font-size: 0.75rem;">${row.target_country || '???'}</td>
+                            <td class="lb-score">${row.score.toLocaleString()}</td>
+                        </tr>`;
+                });
+            } catch (err) {
+                loading.innerText = "CONNECTION FAILED";
+            }
+        }
+
+        const pCanvas = document.getElementById('particle-layer'), ctx = pCanvas.getContext('2d');
+        pCanvas.width = width; pCanvas.height = height;
+        let particles = [];
+
+        function spawnExplosion(x, y) {
+            document.body.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
+            setTimeout(() => document.body.style.transform = 'none', 50);
+            for(let i=0; i<15; i++) {
+                particles.push({ x: x, y: y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1.0, color: Math.random()>0.5 ? '#ff0055' : '#00ff9d' });
+            }
+        }
+
+        function loopParticles() {
+            ctx.clearRect(0, 0, width, height);
+            for(let i=particles.length-1; i>=0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.life -= 0.04;
+                ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4);
+                if(p.life <= 0) particles.splice(i, 1);
+            }
+            requestAnimationFrame(loopParticles);
+        }
+        loopParticles();
+
+        function alertUser(msg, isError=false) {
+            const floaty = document.createElement('div');
+            floaty.innerText = msg;
+            floaty.style.cssText = `position:fixed; top:20%; left:50%; transform:translateX(-50%); color:${isError ? 'var(--holo-alert)' : 'var(--holo-primary)'}; background:rgba(0,0,0,0.8); padding:1rem 2rem; border:1px solid ${isError ? 'var(--holo-alert)' : 'var(--holo-primary)'}; z-index:200;`;
+            document.body.appendChild(floaty);
+            setTimeout(() => floaty.remove(), 2000);
+        }
+        window.addEventListener('resize', () => { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; });
+    </script>
+</body>
+</html>
