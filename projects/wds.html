@@ -236,7 +236,7 @@
         <div id="game-over-panel" class="glass-panel hidden">
             <h2 style="color: var(--holo-alert); margin: 0;">SIMULATION ENDED</h2>
             <div style="font-size: 4rem; font-weight: bold; margin: 1rem 0; color: #fff;" id="final-score">00000</div>
-            <p id="save-status" style="color: #888; font-size: 0.8rem; margin-bottom: 2rem;">AWAITING UPLOAD...</p>
+            <p id="save-status" style="color: #888; font-size: 0.8rem; margin-bottom: 2rem;">AWAITING SAVE...</p>
             <div style="display: flex; gap: 10px;">
                 <button class="menu-btn" onclick="resetGame()">RETRY</button>
                 <button class="menu-btn" onclick="showLeaderboard()">LEADERBOARD</button>
@@ -415,23 +415,60 @@
                 statusEl.innerText = "GUEST PLAYER - DATA UNSAVED";
                 return;
             }
-            statusEl.innerText = "UPLOADING...";
+            
+            statusEl.innerText = "ANALYZING...";
             statusEl.style.color = "#888";
 
             try {
-                const { error } = await supabaseClient.from('leaderboard_wds5').insert({
-                    user_id: currentUser.id,
-                    username: currentUser.user_metadata.full_name || "Unknown Agent",
-                    gamemode: gameMode,
-                    score: score,
-                    target_country: activeCountry.properties.name
-                });
-                if (error) throw error;
-                statusEl.innerText = "UPLOAD COMPLETE.";
-                statusEl.style.color = "var(--holo-primary)";
+                const { data: existing, error: fetchError } = await supabaseClient
+                    .from('leaderboard_wds5')
+                    .select('id, score')
+                    .eq('user_id', currentUser.id)
+                    .eq('gamemode', gameMode)
+                    .maybeSingle();
+
+                if (fetchError) throw fetchError;
+
+                if (existing) {
+                    if (score > existing.score) {
+                        statusEl.innerText = "NEW HIGH SCORE!";
+                        const { error } = await supabaseClient
+                            .from('leaderboard_wds5')
+                            .update({ 
+                                score: score, 
+                                target_country: activeCountry.properties.name,
+                                created_at: new Date().toISOString()
+                            })
+                            .eq('id', existing.id);
+
+                        if (error) throw error;
+                        statusEl.innerText = "SAVED SUCCESSFULLY";
+                        statusEl.style.color = "var(--holo-primary)";
+                    } else {
+                        statusEl.innerText = `CURRENT BEST REMAINS: ${existing.score}`;
+                        statusEl.style.color = "#aaa";
+                    }
+                } else {
+                    statusEl.innerText = "LOGGING INITIAL ENTRY...";
+                    const { error } = await supabaseClient
+                        .from('leaderboard_wds5')
+                        .insert({
+                            user_id: currentUser.id,
+                            username: currentUser.user_metadata.full_name || "Unknown Agent",
+                            gamemode: gameMode,
+                            score: score,
+                            target_country: activeCountry.properties.name
+                        });
+
+                    if (error) throw error;
+                    statusEl.innerText = "ENTRY CONFIRMED.";
+                    statusEl.style.color = "var(--holo-primary)";
+                }
+
             } catch (err) {
                 console.error(err);
-                statusEl.innerText = "UPLOAD FAILED (DB ERROR)";
+                statusEl.innerText = "DB CONNECTION ERROR";
+                statusEl.style.color = "var(--holo-alert)";
             }
         }
 
