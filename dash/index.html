@@ -294,7 +294,7 @@
 
         const typeSpeed = 25; 
         const linePause = 300; 
-        const VALID_PASSWORD = "admin";
+        const VALID_PASSWORD = "gabe";
         
         let failCount = 0;
         let isLocked = false;
@@ -348,7 +348,7 @@
             commandInput.value = "";
             commandInput.focus(); 
             
-            const autoPass = "admin";
+            const autoPass = "gabe";
             for (let i = 0; i < autoPass.length; i++) {
                 commandInput.value += autoPass.charAt(i);
                 await new Promise(r => setTimeout(r, 150)); 
@@ -402,7 +402,7 @@
                         const sassyPart = document.createElement('span');
                         sassyPart.className = 'gray-text';
                         responseLine.appendChild(sassyPart);
-                        await typeWriter(" (Psst... the password is 'admin')", sassyPart);
+                        await typeWriter(" (Psst... the password is 'gabe')", sassyPart);
                         
                     } else if (failCount === 2) {
                         const sassyPart = document.createElement('span');
