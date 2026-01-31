@@ -34,57 +34,49 @@
         #game-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         #particle-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         
+        .target-node {
+            position: absolute;
+            width: 50px; height: 50px;
+            background: rgba(255, 0, 85, 0.2);
+            border: 2px solid var(--holo-alert);
+            border-radius: 50%;
+            cursor: crosshair;
+            z-index: 150;
+            box-shadow: 0 0 15px var(--holo-alert);
+            transform: translate(-50%, -50%);
+            animation: shrink 4s linear forwards;
+        }
+        .target-node:hover { background: rgba(255, 0, 85, 0.8); }
+
+        @keyframes shrink {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
         #ui-container { 
-            position: absolute; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            z-index: 50; 
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 50; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
         #hud-bar {
-            position: absolute;
-            top: 0; left: 0; width: 100%;
-            padding: 1.5rem;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.5s;
+            position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem;
+            display: flex; justify-content: space-between; pointer-events: none;
+            z-index: 100; opacity: 0; transition: opacity 0.5s;
         }
 
         #timer-display {
-            position: absolute;
-            top: 12%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 4rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.1);
+            position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+            font-size: 4rem; font-weight: 800; color: rgba(255,255,255,0.1);
             text-shadow: 0 0 20px rgba(0,255,157,0.1);
-            pointer-events: none;
-            z-index: 100;
-            transition: color 0.2s;
+            pointer-events: none; z-index: 100; transition: color 0.2s;
         }
 
         #start-signal {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 8rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 50px var(--holo-primary);
-            z-index: 200;
-            pointer-events: none;
-            opacity: 0;
-            white-space: nowrap;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 8rem; font-weight: 900; color: #fff;
+            text-shadow: 0 0 50px var(--holo-primary); z-index: 200;
+            pointer-events: none; opacity: 0; white-space: nowrap;
         }
         .signal-anim { animation: signalPop 0.8s ease-out forwards; }
         @keyframes signalPop {
@@ -94,92 +86,38 @@
         }
 
         .glass-panel {
-            background: var(--holo-glass);
-            border: 1px solid var(--holo-primary);
-            padding: 2.5rem;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.15);
-            backdrop-filter: blur(8px);
-            max-width: 500px;
-            width: 90%;
-            pointer-events: auto;
-            transform: translateY(20px);
-            opacity: 0;
+            background: var(--holo-glass); border: 1px solid var(--holo-primary);
+            padding: 2.5rem; text-align: center; box-shadow: 0 0 30px rgba(0, 255, 157, 0.15);
+            backdrop-filter: blur(8px); max-width: 500px; width: 90%;
+            pointer-events: auto; transform: translateY(20px); opacity: 0;
             animation: bootUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            position: relative;
         }
-
         @keyframes bootUp { to { transform: translateY(0); opacity: 1; } }
 
-        .menu-title {
-            font-size: 2.5rem;
-            margin: 0 0 0.5rem 0;
-            text-shadow: 0 0 15px var(--holo-primary);
-            letter-spacing: -2px;
-        }
+        .menu-title { font-size: 2.5rem; margin: 0 0 0.5rem 0; text-shadow: 0 0 15px var(--holo-primary); letter-spacing: -2px; }
 
         .menu-btn {
-            display: block;
-            width: 100%;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--holo-dim);
-            color: var(--holo-primary);
-            padding: 15px;
-            margin: 10px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
+            display: block; width: 100%; background: rgba(0,0,0,0.4);
+            border: 1px solid var(--holo-dim); color: var(--holo-primary);
+            padding: 15px; margin: 10px 0; font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase;
         }
-        .menu-btn:hover {
-            background: var(--holo-primary);
-            color: #000;
-            border-color: var(--holo-primary);
-            box-shadow: 0 0 15px var(--holo-primary);
-        }
+        .menu-btn:hover { background: var(--holo-primary); color: #000; box-shadow: 0 0 15px var(--holo-primary); }
 
-        .btn-secondary-style {
-            border-color: #555;
-            color: #888;
-        }
-        .btn-secondary-style:hover {
-            border-color: #fff;
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        .btn-secondary-style { border-color: #555; color: #888; }
+        .btn-secondary-style:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
 
-        .login-btn-glow {
-            border-color: #7289da;
-            color: #fff;
-            background: rgba(114, 137, 218, 0.2);
-        }
-        .login-btn-glow:hover {
-            background: #7289da;
-            color: #fff;
-            box-shadow: 0 0 20px #7289da;
-        }
+        .login-btn-glow { border-color: #7289da; color: #fff; background: rgba(114, 137, 218, 0.2); }
+        .login-btn-glow:hover { background: #7289da; color: #fff; box-shadow: 0 0 20px #7289da; }
 
         .profile-badge {
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid var(--holo-primary);
-            padding: 10px;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            width: 100%;
-            box-sizing: border-box;
+            background: rgba(0, 255, 157, 0.1); border: 1px solid var(--holo-primary);
+            padding: 10px; margin-bottom: 1.5rem; display: inline-block; width: 100%; box-sizing: border-box;
         }
 
         .lb-tabs { display: flex; gap: 10px; margin-bottom: 1rem; justify-content: center; }
-        .lb-tab {
-            background: transparent; border: 1px solid #333; color: #888;
-            padding: 5px 15px; cursor: pointer; font-family: inherit;
-        }
-        .lb-tab.active {
-            border-color: var(--holo-primary); color: var(--holo-primary);
-            background: var(--holo-dim);
-        }
+        .lb-tab { background: transparent; border: 1px solid #333; color: #888; padding: 5px 15px; cursor: pointer; font-family: inherit; }
+        .lb-tab.active { border-color: var(--holo-primary); color: var(--holo-primary); background: var(--holo-dim); }
 
         .lb-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; text-align: left; }
         .lb-table th { border-bottom: 1px solid var(--holo-primary); padding: 5px; opacity: 0.7; }
@@ -189,7 +127,6 @@
 
         .country { fill: rgba(0, 20, 10, 0.6); stroke: var(--holo-primary); stroke-width: 0.5px; transition: fill 0.1s; cursor: crosshair; }
         .country:hover { fill: rgba(0, 255, 157, 0.15); }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -208,8 +145,9 @@
                 <div id="user-status" style="font-size: 0.8rem; color: #aaa;">INITIALIZING...</div>
             </div>
 
-            <button class="menu-btn" onclick="startGame('10s')"><i class="fas fa-stopwatch"></i> BLITZ (10s)</button>
-            <button class="menu-btn" onclick="startGame('30s')"><i class="fas fa-hourglass-half"></i> ENDURANCE (30s)</button>
+            <button class="menu-btn" onclick="startGame('10s')"><i class="fas fa-stopwatch"></i> BLITZ</button>
+            <button class="menu-btn" onclick="startGame('30s')"><i class="fas fa-hourglass-half"></i> ENDURANCE</button>
+            <button class="menu-btn" onclick="startGame('precision')"><i class="fas fa-crosshairs"></i> PRECISION</button>
             <button class="menu-btn" onclick="showLeaderboard()"><i class="fas fa-list"></i> LEADERBOARD</button>
             
             <button class="menu-btn btn-secondary-style" onclick="window.location.href='../projects/index.html'">
@@ -222,6 +160,7 @@
             <div class="lb-tabs">
                 <button class="lb-tab active" id="tab-10s" onclick="loadLeaderboardData('10s')">BLITZ</button>
                 <button class="lb-tab" id="tab-30s" onclick="loadLeaderboardData('30s')">ENDURANCE</button>
+                <button class="lb-tab" id="tab-precision" onclick="loadLeaderboardData('precision')">PRECISION</button>
             </div>
             <div style="height: 250px; overflow-y: auto;">
                 <table class="lb-table">
@@ -259,6 +198,7 @@
     <div id="timer-display" class="hidden">10.00</div>
 
     <div id="game-layer"></div>
+    <div id="targets-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:20;"></div>
     <canvas id="particle-layer"></canvas>
 
     <script src="../js/auth.js"></script>
@@ -266,7 +206,7 @@
     <script>
         const width = window.innerWidth, height = window.innerHeight;
         let gameState = 'MENU', gameMode = '10s', score = 0, timeRemaining = 0;
-        let gameLoop = null, activeCountry = null, currentUser = null;
+        let gameLoop = null, spawnLoop = null, activeCountry = null, currentUser = null;
         const FORBIDDEN = ["Poland", "Ukraine", "Palestine", "Sudan", "State of Palestine"];
 
         window.addEventListener('load', async () => {
@@ -275,14 +215,13 @@
                 currentUser = data.session?.user || null;
                 updateAuthUI();
             } else {
-                console.warn("WDS: Supabase client not found in global scope.");
+                console.warn("WDS: Supabase client not found.");
             }
         });
 
         function updateAuthUI() {
             const container = document.getElementById('auth-section');
             const statusText = document.getElementById('user-status');
-            
             const existingBtn = document.getElementById('login-btn');
             if(existingBtn) existingBtn.remove();
 
@@ -294,7 +233,6 @@
                 statusText.innerText = "GUEST PLAYER";
                 statusText.style.color = "#888";
                 container.style.borderColor = "#555";
-                
                 const btn = document.createElement('button');
                 btn.id = 'login-btn';
                 btn.className = 'menu-btn login-btn-glow';
@@ -356,7 +294,7 @@
                 return;
             }
 
-            if (gameState === 'PLAYING' && d === activeCountry) {
+            if (gameState === 'PLAYING' && gameMode !== 'precision' && d === activeCountry) {
                 score += 100;
                 document.getElementById('score-display').innerText = score.toString().padStart(5, '0');
                 spawnExplosion(...d3.pointer(event, document.body));
@@ -365,7 +303,6 @@
 
         function playStartSequence() {
             const signal = document.getElementById('start-signal');
-            
             signal.innerText = "READY?";
             signal.style.color = "#fff";
             signal.classList.remove('signal-anim');
@@ -378,16 +315,19 @@
                 signal.classList.remove('signal-anim');
                 void signal.offsetWidth;
                 signal.classList.add('signal-anim');
-                
                 setTimeout(beginCountdown, 500);
             }, 800);
         }
 
         function beginCountdown() {
             gameState = 'PLAYING';
-            timeRemaining = gameMode === '10s' ? 10 : 30;
+            timeRemaining = (gameMode === '30s' || gameMode === 'precision') ? 30 : 10;
             const timerEl = document.getElementById('timer-display');
             timerEl.classList.remove('hidden');
+
+            if(gameMode === 'precision') {
+                spawnLoop = setInterval(spawnTarget, 600);
+            }
             
             gameLoop = setInterval(() => {
                 timeRemaining -= 0.1;
@@ -399,8 +339,55 @@
             }, 100);
         }
 
+        function spawnTarget() {
+            if(!activeCountry) return;
+            const bounds = path.bounds(activeCountry);
+            const [[x0, y0], [x1, y1]] = bounds;
+            
+            for(let i=0; i<10; i++) {
+                const rx = x0 + Math.random() * (x1 - x0);
+                const ry = y0 + Math.random() * (y1 - y0);
+                
+                const coords = projection.invert([rx, ry]);
+                
+                if (d3.geoContains(activeCountry, coords)) {
+                    createTargetNode(rx, ry);
+                    break;
+                }
+            }
+        }
+
+        function createTargetNode(x, y) {
+            const container = document.getElementById('targets-container');
+            const target = document.createElement('div');
+            target.className = 'target-node';
+            
+            const transform = d3.zoomTransform(svg.node());
+            const appliedX = transform.applyX(x);
+            const appliedY = transform.applyY(y);
+
+            target.style.left = appliedX + 'px';
+            target.style.top = appliedY + 'px';
+            target.style.pointerEvents = "auto";
+
+            target.onmousedown = (e) => {
+                e.stopPropagation(); 
+                score += 300; 
+                document.getElementById('score-display').innerText = score.toString().padStart(5, '0');
+                spawnExplosion(appliedX, appliedY);
+                target.remove();
+            };
+
+            setTimeout(() => { if(target.parentNode) target.remove(); }, 4000);
+
+            container.appendChild(target);
+        }
+
         function gameOver() {
             clearInterval(gameLoop);
+            clearInterval(spawnLoop);
+            document.getElementById('targets-container').innerHTML = '';
+            
             gameState = 'FINISHED';
             document.getElementById('timer-display').classList.add('hidden');
             document.getElementById('hud-bar').style.opacity = 0;
@@ -415,7 +402,6 @@
                 statusEl.innerText = "GUEST PLAYER - DATA UNSAVED";
                 return;
             }
-            
             statusEl.innerText = "ANALYZING...";
             statusEl.style.color = "#888";
 
@@ -431,7 +417,6 @@
 
                 if (existing) {
                     if (score > existing.score) {
-                        statusEl.innerText = "NEW HIGHSCORE SAVED!";
                         const { error } = await supabaseClient
                             .from('leaderboard_wds5')
                             .update({ 
@@ -440,7 +425,6 @@
                                 created_at: new Date().toISOString()
                             })
                             .eq('id', existing.id);
-
                         if (error) throw error;
                         statusEl.innerText = "NEW HIGHSCORE SAVED!";
                         statusEl.style.color = "var(--holo-primary)";
@@ -449,7 +433,7 @@
                         statusEl.style.color = "#aaa";
                     }
                 } else {
-                    statusEl.innerText = "LOGGING INITIAL ENTRY...";
+                    statusEl.innerText = "SAVING NEW SCORE...";
                     const { error } = await supabaseClient
                         .from('leaderboard_wds5')
                         .insert({
@@ -459,12 +443,10 @@
                             score: score,
                             target_country: activeCountry.properties.name
                         });
-
                     if (error) throw error;
                     statusEl.innerText = "SAVED SUCCESSFULLY!";
                     statusEl.style.color = "var(--holo-primary)";
                 }
-
             } catch (err) {
                 console.error(err);
                 statusEl.innerText = "DB CONNECTION ERROR";
@@ -476,6 +458,7 @@
             score = 0;
             document.getElementById('score-display').innerText = "00000";
             document.getElementById('game-over-panel').classList.add('hidden');
+            document.getElementById('targets-container').innerHTML = '';
             svg.transition().duration(1000).call(zoom.transform, d3.zoomIdentity);
             startGame(gameMode);
         }
@@ -494,8 +477,9 @@
         }
 
         async function loadLeaderboardData(mode) {
-            document.getElementById('tab-10s').className = mode === '10s' ? 'lb-tab active' : 'lb-tab';
-            document.getElementById('tab-30s').className = mode === '30s' ? 'lb-tab active' : 'lb-tab';
+            ['10s', '30s', 'precision'].forEach(m => {
+                document.getElementById('tab-'+m).className = (m === mode) ? 'lb-tab active' : 'lb-tab';
+            });
             
             const tbody = document.getElementById('lb-content');
             const loading = document.getElementById('lb-loading');
