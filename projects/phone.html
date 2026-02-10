@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuxOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/phone.css">
+</head>
+<body>
+
+    <div id="app-container">
+        <div class="phone-case">
+            <div class="phone-screen">
+                
+                <div id="boot-screen">
+                    <div class="boot-logo">AuxOS</div>
+                    <div class="boot-text">Powered by Anxiety</div>
+                </div>
+
+                <div id="image-overlay" onclick="closeImageViewer()">
+                    <img id="overlay-img" src="" alt="Full View">
+                </div>
+
+                <div id="confetti-container"></div>
+
+                <div id="notification-toast" class="toast" onclick="handleToastClick()">
+                    <div class="toast-header">
+                        <span id="toast-sender">System</span>
+                        <span>now</span>
+                    </div>
+                    <div class="toast-body" id="toast-message"></div>
+                </div>
+
+                <div id="victory-screen" class="screen" style="z-index: 150; background: #000;">
+                    <div class="app-header">
+                        <i class="fas fa-home" onclick="goHome()"></i>
+                        <h2>Yapper Post</h2>
+                    </div>
+                    <div class="victory-content">
+                        <div class="tweet-card">
+                            <div class="tweet-header">
+                                <div class="pfp"></div>
+                                <div class="tweet-user">
+                                    <h4>IceCream_Enjoyer24Xx</h4>
+                                    <span>@iloveicecream</span>
+                                </div>
+                            </div>
+                            <div class="tweet-text" id="final-apology-text"></div>
+                            <div class="tweet-stats">
+                                <span>10:42 PM · Feb 2026</span>
+                            </div>
+                            <div class="tweet-metrics">
+                                <span><strong>4.2M</strong> Views</span>
+                            </div>
+                        </div>
+                        <div class="comments-section" id="comments-list"></div>
+                    </div>
+                </div>
+
+                <div class="status-bar">
+                    <span class="clock-display">10:30</span>
+                    <div class="status-right">
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <div id="screen-home" class="screen">
+                    <div class="home-spacer"></div>
+                    <div class="weather-widget">
+                        <h2>Local</h2>
+                        <h1>24°</h1>
+                        <h2>Clear Sky</h2>
+                    </div>
+
+                    <div class="search-widget" onclick="openGoogle()">
+                        <i class="fab fa-google"></i>
+                        <span>Search...</span>
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    
+                    <div class="app-grid">
+                        <div class="app-icon" onclick="openApp('yapper')">
+                            <div class="icon-box twitter-bg"><i class="fab fa-twitter"></i></div>
+                            <span class="app-label" style="font-weight: 900; color: white;">Yapper</span>
+                        </div>
+                        <div class="app-icon" onclick="openApp('messages')">
+                            <div class="icon-box messages-bg" id="msg-icon-box"><i class="fas fa-comment-alt"></i></div>
+                            <span class="app-label">Messages</span>
+                        </div>
+                        <div class="app-icon" onclick="openApp('notes')">
+                            <div class="icon-box notes-bg"><i class="fas fa-sticky-note"></i></div>
+                            <span class="app-label">Notes</span>
+                        </div>
+                        <div class="app-icon" onclick="openApp('gallery')">
+                            <div class="icon-box gallery-bg"><i class="fas fa-images"></i></div>
+                            <span class="app-label">Gallery</span>
+                        </div>
+                        
+                        <div class="app-icon" onclick="openApp('calendar')">
+                            <div class="icon-box cal-bg"><i class="fas fa-calendar-alt"></i></div>
+                            <span class="app-label">Calendar</span>
+                        </div>
+                        <div class="app-icon" onclick="openApp('calculator')">
+                            <div class="icon-box calc-bg"><i class="fas fa-calculator"></i></div>
+                            <span class="app-label">Calc</span>
+                        </div>
+                         <div class="app-icon" onclick="showToast('System', 'No music found. Sad.')">
+                            <div class="icon-box music-bg"><i class="fas fa-music"></i></div>
+                            <span class="app-label">Music</span>
+                        </div>
+                        <div class="app-icon" onclick="openApp('settings')">
+                            <div class="icon-box settings-bg"><i class="fas fa-cog"></i></div>
+                            <span class="app-label">Settings</span>
+                        </div>
+                    </div>
+                    <div class="home-spacer"></div>
+                </div>
+
+                <div id="screen-notes" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="goHome()"></i>
+                        <h2 style="color: #ff80ab;">Notes</h2>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="notes-list">
+                        <div class="note-item">
+                            <h3>To-do</h3>
+                            <p>1. walk the dog<br>2. take a shower<br>3. don't drown</p>
+                        </div>
+                        <div class="note-item">
+                            <h3>Grocery List</h3>
+                            <p>milk, eggs, highly enriched uranium...</p>
+                        </div>
+                        <div class="note-item">
+                            <h3>Lyrics Ideas</h3>
+                            <p>something that rhymes prolly</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="screen-messages" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="goHome()"></i>
+                        <h2>Messages</h2>
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="msg-list"></div>
+                </div>
+
+                <div id="screen-conversation" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="openApp('messages')"></i>
+                        <h2 id="chat-contact-name">Contact</h2>
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="chat-body" id="chat-body"></div>
+                    <div id="script-choices" class="script-choices" style="display: none;"></div>
+                    <div class="chat-input-area" id="real-chat-input">
+                        <input type="text" id="chat-input" placeholder="Text message" disabled>
+                        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <div id="screen-calculator" class="screen" style="background: #000;">
+                    <div class="calc-display" id="calc-display">0</div>
+                    <div class="calc-grid">
+                        <button class="calc-btn grey" onclick="calcInput('C')">C</button>
+                        <button class="calc-btn grey" onclick="calcInput('+/-')">+/-</button>
+                        <button class="calc-btn grey" onclick="calcInput('%')">%</button>
+                        <button class="calc-btn orange" onclick="calcInput('/')">÷</button>
+                        <button class="calc-btn" onclick="calcInput('7')">7</button>
+                        <button class="calc-btn" onclick="calcInput('8')">8</button>
+                        <button class="calc-btn" onclick="calcInput('9')">9</button>
+                        <button class="calc-btn orange" onclick="calcInput('*')">×</button>
+                        <button class="calc-btn" onclick="calcInput('4')">4</button>
+                        <button class="calc-btn" onclick="calcInput('5')">5</button>
+                        <button class="calc-btn" onclick="calcInput('6')">6</button>
+                        <button class="calc-btn orange" onclick="calcInput('-')">-</button>
+                        <button class="calc-btn" onclick="calcInput('1')">1</button>
+                        <button class="calc-btn" onclick="calcInput('2')">2</button>
+                        <button class="calc-btn" onclick="calcInput('3')">3</button>
+                        <button class="calc-btn orange" onclick="calcInput('+')">+</button>
+                        <button class="calc-btn zero" onclick="calcInput('0')">0</button>
+                        <button class="calc-btn" onclick="calcInput('.')">.</button>
+                        <button class="calc-btn orange" onclick="calcInput('=')">=</button>
+                    </div>
+                </div>
+
+                <div id="screen-calendar" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="goHome()"></i>
+                        <h2>Calendar</h2>
+                        <i class="fas fa-plus" style="color:#ff3b30"></i>
+                    </div>
+                    <div class="cal-wrapper">
+                        <div class="cal-widget">
+                            <div class="cal-widget-header">
+                                <span class="cal-month-title">AUGUST</span>
+                                <span class="cal-year-title">2025</span>
+                            </div>
+                            <div class="cal-grid-header">
+                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                            </div>
+                            <div class="cal-grid" id="cal-grid-days"></div>
+                        </div>
+                        <div class="cal-events-title">UPCOMING</div>
+                        <div class="cal-event-card" onclick="showToast('Reminders', 'Buy a gift!')">
+                            <div class="cal-event-date">
+                                <span>14</span>
+                                <small>AUG</small>
+                            </div>
+                            <div class="cal-event-info">
+                                <h4>Anniversary <3</h4>
+                                <p>All Day • Local Time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="screen-settings" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="goHome()"></i>
+                        <h2>Settings</h2>
+                    </div>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-icon"><i class="fas fa-user-circle"></i></div>
+                            <div class="setting-text"><h4>User401928</h4><p>AuxOS ID, Media & Purchases</p></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-icon"><i class="fas fa-wifi"></i></div>
+                            <div class="setting-text"><h4>Wi-Fi</h4><p>Connected</p></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-icon"><i class="fas fa-battery-full"></i></div>
+                            <div class="setting-text"><h4>Battery</h4><p>75% - Healthy</p></div>
+                        </div>
+                         <div class="setting-item">
+                            <div class="setting-icon"><i class="fas fa-info-circle"></i></div>
+                            <div class="setting-text"><h4>About Phone</h4><p>Aux 18 Pro Max</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="screen-gallery" class="screen">
+                    <div class="app-header">
+                        <i class="fas fa-chevron-left" onclick="goHome()"></i>
+                        <h2>Recents</h2>
+                    </div>
+                    <div class="gallery-grid">
+                        <div class="gallery-item" style="background-image: url('../images/domer.png')" onclick="openImageViewer('../images/domer.png')"></div>
+                        <div class="gallery-item" style="background-image: url('../images/lollipop.jpg')" onclick="openImageViewer('../images/lollipop.jpg')"></div>
+                        <div class="gallery-item" style="background-image: url('../images/alex.jpg')" onclick="openImageViewer('../images/alex.jpg')"></div>
+                    </div>
+                </div>
+
+                <div id="screen-yapper" class="screen" style="background: #000;">
+                    <div class="yapper-header">
+                        <span onclick="goHome()">Cancel</span>
+                        <button class="post-btn" id="post-btn" disabled>Post</button>
+                    </div>
+                    <div class="yapper-body">
+                        <div class="pfp"></div>
+                        <div class="yapper-content">
+                             <textarea class="yapper-input" id="apology-input" placeholder="What is happening?"></textarea>
+                             <div class="yapper-footer">
+                                 <span id="yapper-counter" style="color: #1da1f2; font-size: 0.8rem; font-weight: 600;">0 Chars</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <i class="fas fa-bars" onclick="showToast('System', 'Recent apps cleared')"></i>
+                    <i class="fas fa-square" onclick="goHome()"></i> 
+                    <i class="fas fa-chevron-left" onclick="goHome()"></i> 
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/phone.js"></script>
+</body>
+</html>
