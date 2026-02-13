@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Gabe<3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital@1&family=Indie+Flower&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050510;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #a29bfe;
+            --highlight: #fd79a8;
+            --text-main: #ffffff;
+            --text-muted: #b2bec3;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at bottom, #1a1a2e 0%, #000000 100%);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px 0 50px 0;
+            z-index: 10;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 0;
+            background: -webkit-linear-gradient(45deg, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .timer-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: 500;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(162, 155, 254, 0.3);
+        }
+
+        .distance-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .location { color: var(--accent); }
+
+        .line-graphic {
+            flex-grow: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: var(--highlight);
+            text-shadow: 0 0 10px var(--highlight);
+            animation: pulse-heart 1.5s infinite ease-in-out;
+        }
+
+        .quote-box {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border-left: 3px solid var(--accent);
+            padding: 25px;
+            margin: 10px 0 30px 0;
+            border-radius: 0 15px 15px 0;
+            text-align: center;
+        }
+        
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #eeeeee;
+        }
+
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .reason-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 20px;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reason-card:active { transform: scale(0.95); }
+
+        .card-front {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+
+        .card-content {
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #fff;
+            animation: popIn 0.4s ease-out;
+        }
+
+        .reason-card.revealed {
+            background: linear-gradient(135deg, rgba(162, 155, 254, 0.25), rgba(253, 121, 168, 0.25));
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.2);
+        }
+        .reason-card.revealed .card-front { display: none; }
+        .reason-card.revealed .card-content { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        
+        @keyframes pulse-heart { 
+            0% { transform: translateX(-50%) scale(1); text-shadow: 0 0 10px rgba(253, 121, 168, 0.5); } 
+            50% { transform: translateX(-50%) scale(1.2); text-shadow: 0 0 20px rgba(253, 121, 168, 1); } 
+            100% { transform: translateX(-50%) scale(1); text-shadow: 0 0 10px rgba(253, 121, 168, 0.5); } 
+        }
+
+        #paper-note {
+            display: none;
+            margin-top: 40px;
+            width: 100%;
+            background: #fdfbf7;
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 1.8rem;
+            padding: 30px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transform: rotate(-1deg);
+            position: relative;
+            font-family: 'Indie Flower', cursive;
+            color: #2d3436;
+            font-size: 1.6rem;
+            text-align: center;
+            border-radius: 2px;
+            line-height: 1.8rem;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        #paper-note::before {
+            content: '';
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 100px; height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .paper-btns {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 25px;
+        }
+
+        .handwritten-btn {
+            background: none;
+            border: none;
+            font-family: 'Indie Flower', cursive;
+            font-size: 2.2rem;
+            cursor: pointer;
+            color: #2d3436;
+            position: relative;
+            padding: 5px 15px;
+            transition: transform 0.2s;
+            z-index: 5;
+        }
+        
+        .handwritten-btn:active { transform: scale(0.95); }
+
+        .circle-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; 
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+        }
+        
+        .circle-path {
+            fill: none;
+            stroke: #d63031;
+            stroke-width: 4; 
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            opacity: 0.9;
+        }
+
+        .drawn .circle-path {
+            animation: drawCircle 0.8s forwards ease-out;
+        }
+
+        @keyframes drawCircle {
+            to { stroke-dashoffset: 0; }
+        }
+
+        footer { margin-top: 50px; font-size: 0.8rem; color: var(--text-muted); opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-bg"></canvas>
+    
+    <audio id="bg-music" loop autoplay>
+        <source src="../audio/gabe1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <header>
+            <div class="subtitle">SINCE AUGUST 14th 2025</div>
+            <h1>6 Months</h1>
+        </header>
+
+        <div class="glass-card">
+            <div class="timer-label">TOTAL TIME TOGETHER</div>
+            <div class="timer-display" id="timer">Loading...</div>
+            
+            <div class="distance-container">
+                <span class="location">E</span>
+                <div class="line-graphic"><div class="heart-icon">❤</div></div>
+                <span class="location">G</span>
+            </div>
+        </div>
+
+        <div class="quote-box">
+            <div class="quote-text">
+                Happy Anniversary, Gabe. Even though we are thousands of kilometers apart, you are the closest person to me.
+            </div>
+        </div>
+
+        <div class="reasons-grid">
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">1</div>
+                <div class="card-content">Because you make me laugh harder than anyone else.</div>
+            </div>
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">2</div>
+                <div class="card-content">Because you listen to me ramble about everything.</div>
+            </div>
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">3</div>
+                <div class="card-content">Because you're my safe space.</div>
+            </div>
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">4</div>
+                <div class="card-content">Because even the silence with you is comfortable.</div>
+            </div>
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">5</div>
+                <div class="card-content">Because you're the most precious thing in my life.</div>
+            </div>
+            <div class="reason-card" onclick="reveal(this); attemptPlay();">
+                <div class="card-front">6</div>
+                <div class="card-content">Because I love you more every single day.</div>
+            </div>
+        </div>
+
+        <div id="paper-note">
+            Will you be my valentine?
+            <div class="paper-btns">
+                <button class="handwritten-btn" onclick="selectOption(this)">
+                    Yes
+                    <svg class="circle-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <path class="circle-path" d="M10,25 Q30,5 50,5 T90,25 T50,45 T10,25" />
+                    </svg>
+                </button>
+                <button class="handwritten-btn" onclick="selectOption(this)">
+                    Yes
+                    <svg class="circle-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <path class="circle-path" d="M10,25 Q30,5 50,5 T90,25 T50,45 T10,25" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        const startDate = new Date(2025, 7, 14, 0, 0, 0); 
+
+        window.onload = function() {
+            attemptPlay();
+        }
+
+        document.body.addEventListener('click', function() {
+            attemptPlay();
+        }, { once: true });
+
+        function attemptPlay() {
+            const audio = document.getElementById('bg-music');
+            if (audio.paused) {
+                audio.play().catch(e => console.log("Audio waiting for interaction"));
+            }
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            
+            const h = hours.toString().padStart(2, '0');
+            const m = minutes.toString().padStart(2, '0');
+            const s = seconds.toString().padStart(2, '0');
+
+            document.getElementById('timer').innerText = `${days}d ${h}:${m}:${s}`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        let revealedCount = 0;
+        const totalCards = 6;
+
+        function reveal(element) {
+            if (!element.classList.contains('revealed')) {
+                element.classList.add('revealed');
+                createBurst(element);
+                revealedCount++;
+                
+                if (revealedCount === totalCards) {
+                    setTimeout(() => {
+                        document.getElementById('paper-note').style.display = 'block';
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    }, 500);
+                }
+            }
+        }
+
+        function selectOption(btn) {
+            btn.classList.add('drawn');
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            for(let i=0; i<150; i++) {
+                particles.push(new ConfettiParticle());
+            }
+        }
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2 + 100;
+                this.size = Math.random() * 8 + 5; 
+                this.speedX = (Math.random() - 0.5) * 10;
+                this.speedY = (Math.random() - 1) * 15;
+                this.type = Math.random() > 0.5 ? 'heart' : 'square';
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                this.gravity = 0.3; 
+                this.opacity = 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 10;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += this.gravity;
+                this.rotation += this.rotationSpeed;
+                this.opacity -= 0.005; 
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                if (this.type === 'heart') {
+                    const s = this.size;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-s/2, -s/2, -s, s/3, 0, s);
+                    ctx.bezierCurveTo(s, s/3, s/2, -s/2, 0, 0);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, isBurst = false) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * (isBurst ? 4 : 0.5);
+                this.speedY = (Math.random() - 0.5) * (isBurst ? 4 : 0.5);
+                this.opacity = Math.random();
+                this.decay = isBurst ? 0.03 : 0; 
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.decay > 0) this.opacity -= this.decay;
+                if (this.decay === 0) {
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 60; i++) particles.push(new Particle());
+        }
+
+        function createBurst(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            for(let i=0; i<25; i++) particles.push(new Particle(centerX, centerY, true));
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].opacity <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>
