@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="icon" href="../images/home.svg" type="image/svg+xml">
+    
+    <style>
+        .about-hero {
+            padding: 8rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .about-hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, var(--pink-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 128, 171, 0.2)); }
+            to { filter: drop-shadow(0 0 25px rgba(255, 128, 171, 0.6)); }
+        }
+
+        .handle {
+            font-family: var(--font-head);
+            color: var(--pink-dim);
+            letter-spacing: 3px;
+            font-size: 1.1rem;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(200px, auto);
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .bento-card {
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 128, 171, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: rgba(255, 128, 171, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(255, 128, 171, 0.1);
+        }
+
+        .bento-card:hover::before { opacity: 1; }
+
+        .bento-card h3 {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            color: var(--pink-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+        .span-4 { grid-column: span 4; }
+        .row-span-2 { grid-row: span 2; }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .cyber-tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-family: var(--font-head);
+            transition: 0.3s;
+        }
+
+        .cyber-tag:hover {
+            background: rgba(255, 128, 171, 0.1);
+            border-color: var(--pink-primary);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 128, 171, 0.2);
+        }
+
+        .clean-list { list-style: none; }
+        .clean-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #bbb;
+        }
+        .clean-list li:last-child { border-bottom: none; }
+        .clean-list.likes i { color: var(--accent-green); }
+        .clean-list.dislikes i { color: #ff5555; }
+
+        .marquee-wrapper {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            gap: 1rem;
+            min-width: 100%;
+            animation: scroll 20s linear infinite;
+        }
+
+        /* Adjusted times to handle the longer lists smoothly */
+        .marquee-content.reverse { animation-direction: reverse; animation-duration: 45s; }
+        .marquee-content.slow { animation-duration: 50s; }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(-100% - 1rem)); }
+        }
+
+        .interest-pill {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 20px;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #aaa;
+            transition: 0.3s;
+        }
+        
+        .marquee-wrapper:hover .marquee-content { animation-play-state: paused; }
+        .interest-pill:hover { color: #fff; border-color: var(--pink-primary); }
+
+        .warning-box {
+            background: rgba(255, 85, 85, 0.02);
+            border: 1px solid rgba(255, 85, 85, 0.2);
+        }
+        .warning-box h3 { color: #ff5555; }
+        .warning-text { color: #aaa; font-size: 0.95rem; line-height: 1.6; }
+
+        .counter-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .time-block { text-align: center; }
+        .time-val {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: var(--font-head);
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        .time-label {
+            color: var(--pink-primary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: var(--font-head);
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .span-3, .span-4 { grid-column: span 2; }
+        }
+        @media (max-width: 768px) {
+            .about-hero h1 { font-size: 3rem; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .span-2, .span-3, .span-4 { grid-column: span 1; }
+            .time-val { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header class="about-hero">
+            <h1>EVELYN</h1>
+            <div class="handle">@auxiliaryfrfr</div>
+        </header>
+
+        <main class="bento-grid">
+            
+            <div class="bento-card span-2">
+                <h3><i class="fas fa-terminal"></i> About Me</h3>
+                <p style="color: #ccc; line-height: 1.7; font-size: 1.05rem; margin-bottom: 1.5rem;">
+                    Haii, I'm Evie. I've been a developer for over 3 years now. I have served as the former CEO of FemDevs alongside countless side-projects. I speak both Arabic and English fluently, some French, and I'm currently learning German. 
+                </p>
+                <div class="tag-cloud mt-auto">
+                    <span class="cyber-tag">18 y/o</span>
+                    <span class="cyber-tag">Progressive</span>
+                    <span class="cyber-tag">Radical Liberal</span>
+                    <span class="cyber-tag">Socialist</span>
+                    <span class="cyber-tag">Environmentalist</span>
+                    <span class="cyber-tag">Atheist</span>
+                    <span class="cyber-tag">Omnisexual</span>
+                    <span class="cyber-tag">Genderfae</span>
+                </div>
+            </div>
+
+            <div class="bento-card">
+                <h3><i class="fas fa-heart"></i> Adores</h3>
+                <ul class="clean-list likes">
+                    <li><i class="fas fa-check"></i> My spouse</li>
+                    <li><i class="fas fa-check"></i> Cooking & Badminton</li>
+                    <li><i class="fas fa-check"></i> Languages & Code</li>
+                    <li><i class="fas fa-check"></i> Cats & Video Games</li>
+                    <li><i class="fas fa-check"></i> Gender neutral language</li>
+                </ul>
+            </div>
+
+            <div class="bento-card">
+                <h3><i class="fas fa-times"></i> Despises</h3>
+                <ul class="clean-list dislikes">
+                    <li><i class="fas fa-xmark"></i> Waking up early</li>
+                    <li><i class="fas fa-xmark"></i> Bright lights & loud noises</li>
+                    <li><i class="fas fa-xmark"></i> Being in public too long</li>
+                    <li><i class="fas fa-xmark"></i> Invalidating queer identities</li>
+                    <li><i class="fas fa-xmark"></i> Guilt-tripping</li>
+                </ul>
+            </div>
+
+            <div class="bento-card span-4">
+                <h3><i class="fas fa-database"></i> Core Interests</h3>
+                
+                <div style="margin-bottom: 0.5rem; color: #666; font-size: 0.8rem; font-family: var(--font-head);">// MUSIC</div>
+                <div class="marquee-wrapper">
+                    <div class="marquee-content">
+                        <div class="interest-pill">Arctic Monkeys</div><div class="interest-pill">Måneskin</div>
+                        <div class="interest-pill">Kendrick Lamar</div><div class="interest-pill">Eminem</div>
+                        <div class="interest-pill">System of a Down</div><div class="interest-pill">ISSBROKIE</div>
+                        <div class="interest-pill">bbno$</div><div class="interest-pill">Doechii</div>
+                        <div class="interest-pill">Billie Eilish</div><div class="interest-pill">Confetti</div>
+                        <div class="interest-pill">21Pilots</div><div class="interest-pill">Childish Gambino</div>
+                    </div>
+                    <div class="marquee-content" aria-hidden="true">
+                        <div class="interest-pill">Arctic Monkeys</div><div class="interest-pill">Måneskin</div>
+                        <div class="interest-pill">Kendrick Lamar</div><div class="interest-pill">Eminem</div>
+                        <div class="interest-pill">System of a Down</div><div class="interest-pill">ISSBROKIE</div>
+                        <div class="interest-pill">bbno$</div><div class="interest-pill">Doechii</div>
+                        <div class="interest-pill">Billie Eilish</div><div class="interest-pill">Confetti</div>
+                        <div class="interest-pill">21Pilots</div><div class="interest-pill">Childish Gambino</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.5rem; color: #666; font-size: 0.8rem; font-family: var(--font-head);">// CINEMA</div>
+                <div class="marquee-wrapper">
+                    <div class="marquee-content reverse">
+                        <div class="interest-pill">Steven Universe</div><div class="interest-pill">Avatar: TLA</div>
+                        <div class="interest-pill">The Owl House</div><div class="interest-pill">The Sopranos</div>
+                        <div class="interest-pill">Gravity Falls</div><div class="interest-pill">House MD</div>
+                        <div class="interest-pill">Breaking Bad</div><div class="interest-pill">Better Call Saul</div>
+                        <div class="interest-pill">Good Omens</div><div class="interest-pill">Family Guy</div>
+                        <div class="interest-pill">The Boys</div><div class="interest-pill">Gen V</div>
+                        <div class="interest-pill">Harry Potter</div><div class="interest-pill">My Hero Academia</div>
+                        <div class="interest-pill">Impractical Jokers</div><div class="interest-pill">Deadpool</div>
+                        <div class="interest-pill">Pulp Fiction</div><div class="interest-pill">Inglourious Basterds</div>
+                        <div class="interest-pill">Django</div><div class="interest-pill">The Dictator</div>
+                        <div class="interest-pill">Jojo Rabbit</div><div class="interest-pill">MARVEL</div>
+                    </div>
+                    <div class="marquee-content reverse" aria-hidden="true">
+                        <div class="interest-pill">Steven Universe</div><div class="interest-pill">Avatar: TLA</div>
+                        <div class="interest-pill">The Owl House</div><div class="interest-pill">The Sopranos</div>
+                        <div class="interest-pill">Gravity Falls</div><div class="interest-pill">House MD</div>
+                        <div class="interest-pill">Breaking Bad</div><div class="interest-pill">Better Call Saul</div>
+                        <div class="interest-pill">Good Omens</div><div class="interest-pill">Family Guy</div>
+                        <div class="interest-pill">The Boys</div><div class="interest-pill">Gen V</div>
+                        <div class="interest-pill">Harry Potter</div><div class="interest-pill">My Hero Academia</div>
+                        <div class="interest-pill">Impractical Jokers</div><div class="interest-pill">Deadpool</div>
+                        <div class="interest-pill">Pulp Fiction</div><div class="interest-pill">Inglourious Basterds</div>
+                        <div class="interest-pill">Django</div><div class="interest-pill">The Dictator</div>
+                        <div class="interest-pill">Jojo Rabbit</div><div class="interest-pill">MARVEL</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.5rem; color: #666; font-size: 0.8rem; font-family: var(--font-head);">// GAMES</div>
+                <div class="marquee-wrapper">
+                    <div class="marquee-content slow">
+                        <div class="interest-pill">A Hat In Time</div><div class="interest-pill">Warframe</div>
+                        <div class="interest-pill">Fortnite</div><div class="interest-pill">Roblox</div>
+                        <div class="interest-pill">Overwatch</div><div class="interest-pill">Minecraft</div>
+                        <div class="interest-pill">Guilty Gear Strive</div><div class="interest-pill">Undertale</div>
+                        <div class="interest-pill">Deltarune</div><div class="interest-pill">Brawlhalla</div>
+                        <div class="interest-pill">Spore</div><div class="interest-pill">BTD6</div>
+                        <div class="interest-pill">HOI4</div><div class="interest-pill">Warnament</div>
+                        <div class="interest-pill">Among Us</div><div class="interest-pill">GTA</div>
+                        <div class="interest-pill">RDR2</div><div class="interest-pill">TF2</div>
+                        <div class="interest-pill">Uncharted</div><div class="interest-pill">Mortal Kombat</div>
+                        <div class="interest-pill">PVZGW</div><div class="interest-pill">LEGO</div>
+                        <div class="interest-pill">Pokémon</div><div class="interest-pill">The Sims</div>
+                    </div>
+                    <div class="marquee-content slow" aria-hidden="true">
+                        <div class="interest-pill">A Hat In Time</div><div class="interest-pill">Warframe</div>
+                        <div class="interest-pill">Fortnite</div><div class="interest-pill">Roblox</div>
+                        <div class="interest-pill">Overwatch</div><div class="interest-pill">Minecraft</div>
+                        <div class="interest-pill">Guilty Gear Strive</div><div class="interest-pill">Undertale</div>
+                        <div class="interest-pill">Deltarune</div><div class="interest-pill">Brawlhalla</div>
+                        <div class="interest-pill">Spore</div><div class="interest-pill">BTD6</div>
+                        <div class="interest-pill">HOI4</div><div class="interest-pill">Warnament</div>
+                        <div class="interest-pill">Among Us</div><div class="interest-pill">GTA</div>
+                        <div class="interest-pill">RDR2</div><div class="interest-pill">TF2</div>
+                        <div class="interest-pill">Uncharted</div><div class="interest-pill">Mortal Kombat</div>
+                        <div class="interest-pill">PVZGW</div><div class="interest-pill">LEGO</div>
+                        <div class="interest-pill">Pokémon</div><div class="interest-pill">The Sims</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card span-2 warning-box">
+                <h3><i class="fas fa-exclamation-triangle"></i> Before You Follow</h3>
+                <p class="warning-text">
+                    I'm very openly queer and talk about it often, am not always SFW, might disappear randomly due to my low attention span and social battery, rarely use tone indicators, and will use slurs and swear often.
+                </p>
+            </div>
+
+            <div class="bento-card span-2 warning-box" style="border-color: rgba(255, 85, 85, 0.4);">
+                <h3><i class="fas fa-ban"></i> Do Not Interact</h3>
+                <p class="warning-text">
+                    If we haven't met before and you're below 16 y/o. If you're queerphobic, transphobic, racist, sexist, ableist, antisemitic, or otherwise on the basic DNI list. If you support zionism, fascism, nazism, authoritarianism, nationalism, or any other form of oppression.
+                </p>
+            </div>
+
+            <div class="bento-card span-4" style="text-align: center;">
+                <h3><i class="fas fa-level-up-alt"></i> Next Birthday</h3>
+                <div class="counter-display">
+                    <div class="time-block">
+                        <div class="time-val" id="cd-days">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="time-val" style="color: var(--pink-dim);">:</div>
+                    <div class="time-block">
+                        <div class="time-val" id="cd-hours">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="time-val" style="color: var(--pink-dim);">:</div>
+                    <div class="time-block">
+                        <div class="time-val" id="cd-mins">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="time-val" style="color: var(--pink-dim);">:</div>
+                    <div class="time-block">
+                        <div class="time-val" id="cd-secs">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/components.js"></script> 
+    <script src="../js/auth.js"></script>
+    <script src="../js/script.js"></script>
+    
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            let bday = new Date(now.getFullYear(), 4, 21); 
+            
+            if (now > bday) { bday.setFullYear(now.getFullYear() + 1); }
+            
+            const diff = bday - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('cd-days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('cd-hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('cd-mins').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('cd-secs').innerText = seconds.toString().padStart(2, '0');
+        }
+        
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>

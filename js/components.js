@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getPathPrefix() {
     const path = window.location.pathname;
-    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/')) {
+    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/') || path.includes('/about/')) {
         return '../'; 
     }
     return './'; 
@@ -22,7 +22,8 @@ function loadNavigation() {
     const isBlog = path.includes('/blog/');
     const isProjects = path.includes('/projects/');
     const isSocials = path.includes('/socials/');
-    const isHome = !isBlog && !isProjects && !isSocials && !path.includes('/dash/');
+    const isAbout = path.includes('/about/');
+    const isHome = !isBlog && !isProjects && !isSocials && !isAbout && !path.includes('/dash/');
 
     const navHTML = `
     <nav class="glass-nav">
@@ -30,6 +31,7 @@ function loadNavigation() {
             <div class="logo">AUXILIARYFRFR</div>
             <ul class="nav-links desktop-menu">
                 <li><a href="${prefix}index.html" class="${isHome ? 'active' : ''}">Home</a></li>
+                <li><a href="${prefix}about/index.html" class="${isAbout ? 'active' : ''}">About</a></li>
                 <li><a href="${prefix}blog/index.html" class="${isBlog ? 'active' : ''}">Blog</a></li>
                 <li><a href="${prefix}projects/index.html" class="${isProjects ? 'active' : ''}">Projects</a></li>
                 <li><a href="${prefix}socials/index.html" class="${isSocials ? 'active' : ''}">Socials</a></li>
@@ -92,6 +94,7 @@ function loadNavigation() {
 
     <div class="mobile-menu" id="mobileMenu">
         <a href="${prefix}index.html" class="${isHome ? 'active' : ''}">Home</a>
+        <a href="${prefix}about/index.html" class="${isAbout ? 'active' : ''}">About</a>
         <a href="${prefix}blog/index.html" class="${isBlog ? 'active' : ''}">Blog</a>
         <a href="${prefix}projects/index.html" class="${isProjects ? 'active' : ''}">Projects</a>
         <a href="${prefix}socials/index.html" class="${isSocials ? 'active' : ''}">Socials</a>
