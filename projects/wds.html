@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <link rel="stylesheet" href="../css/style.css">
@@ -208,15 +207,25 @@
         let gameState = 'MENU', gameMode = '10s', score = 0, timeRemaining = 0;
         let gameLoop = null, spawnLoop = null, activeCountry = null, currentUser = null;
         const FORBIDDEN = ["Poland", "Ukraine", "Palestine", "Sudan", "State of Palestine"];
+        const WORKER_URL = 'https://auth-worker.evie-s-account.workers.dev';
 
         window.addEventListener('load', async () => {
-            if (typeof supabaseClient !== 'undefined') {
-                const { data } = await supabaseClient.auth.getSession();
-                currentUser = data.session?.user || null;
-                updateAuthUI();
-            } else {
-                console.warn("WDS: Supabase client not found.");
+            const token = localStorage.getItem('discord_token');
+            if (token) {
+                try {
+                    const res = await fetch('https://discord.com/api/users/@me', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        currentUser = {
+                            id: user.id,
+                            user_metadata: { full_name: user.global_name || user.username }
+                        };
+                    }
+                } catch(e) {}
             }
+            updateAuthUI();
         });
 
         function updateAuthUI() {
@@ -243,11 +252,8 @@
             }
         }
 
-        async function login() {
-            await supabaseClient.auth.signInWithOAuth({
-                provider: 'discord',
-                options: { redirectTo: window.location.href }
-            });
+        function login() {
+            window.location.href = `${WORKER_URL}/auth/login`;
         }
 
         const svg = d3.select("#game-layer").append("svg").attr("width", width).attr("height", height);
@@ -402,53 +408,26 @@
                 statusEl.innerText = "GUEST PLAYER - DATA UNSAVED";
                 return;
             }
-            statusEl.innerText = "ANALYZING...";
+            statusEl.innerText = "SAVING NEW SCORE...";
             statusEl.style.color = "#888";
 
             try {
-                const { data: existing, error: fetchError } = await supabaseClient
-                    .from('leaderboard_wds5')
-                    .select('id, score')
-                    .eq('user_id', currentUser.id)
-                    .eq('gamemode', gameMode)
-                    .maybeSingle();
-
-                if (fetchError) throw fetchError;
-
-                if (existing) {
-                    if (score > existing.score) {
-                        const { error } = await supabaseClient
-                            .from('leaderboard_wds5')
-                            .update({ 
-                                score: score, 
-                                target_country: activeCountry.properties.name,
-                                created_at: new Date().toISOString()
-                            })
-                            .eq('id', existing.id);
-                        if (error) throw error;
-                        statusEl.innerText = "NEW HIGHSCORE SAVED!";
-                        statusEl.style.color = "var(--holo-primary)";
-                    } else {
-                        statusEl.innerText = "HIGHSCORE REMAINS UNBEATEN...";
-                        statusEl.style.color = "#aaa";
-                    }
-                } else {
-                    statusEl.innerText = "SAVING NEW SCORE...";
-                    const { error } = await supabaseClient
-                        .from('leaderboard_wds5')
-                        .insert({
-                            user_id: currentUser.id,
-                            username: currentUser.user_metadata.full_name || "Unknown Player",
-                            gamemode: gameMode,
-                            score: score,
-                            target_country: activeCountry.properties.name
-                        });
-                    if (error) throw error;
-                    statusEl.innerText = "SAVED SUCCESSFULLY!";
-                    statusEl.style.color = "var(--holo-primary)";
-                }
+                const res = await fetch(`${WORKER_URL}/api/highscores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser.user_metadata.full_name,
+                        score: score,
+                        user_id: currentUser.id,
+                        gamemode: gameMode,
+                        target_country: activeCountry.properties.name
+                    })
+                });
+                
+                if (!res.ok) throw new Error("Failed to save");
+                statusEl.innerText = "SAVED SUCCESSFULLY!";
+                statusEl.style.color = "var(--holo-primary)";
             } catch (err) {
-                console.error(err);
                 statusEl.innerText = "DB CONNECTION ERROR";
                 statusEl.style.color = "var(--holo-alert)";
             }
@@ -487,15 +466,10 @@
             loading.classList.remove('hidden');
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('leaderboard_wds5')
-                    .select('username, score, target_country')
-                    .eq('gamemode', mode)
-                    .order('score', { ascending: false })
-                    .limit(15);
-
+                const res = await fetch(`${WORKER_URL}/api/highscores?gamemode=${mode}`);
+                if (!res.ok) throw new Error("Failed");
+                const data = await res.json();
                 loading.classList.add('hidden');
-                if (error) throw error;
 
                 if (!data || data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: #555;">NO RECORDS FOUND</td></tr>';

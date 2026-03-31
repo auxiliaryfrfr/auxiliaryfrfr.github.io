@@ -1,34 +1,45 @@
-const SUPABASE_URL = 'https://bqmkajpkooucvyabwncu.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_FBcAuoqWgHlZch1XmgWEwA_WKF0JIwE';
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const WORKER_URL = 'https://auth-worker.evie-s-account.workers.dev';
 
 window.addEventListener('load', () => {
     checkUser();
 });
 
 async function checkUser() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        updateUI(session.user);
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('session');
+
+    if (urlToken) {
+        localStorage.setItem('discord_token', urlToken);
+        window.history.replaceState({}, document.title, window.location.pathname); 
+    }
+
+    const token = localStorage.getItem('discord_token');
+    if (token) {
+        try {
+            const res = await fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Token expired');
+            
+            const user = await res.json();
+            updateUI(user);
+        } catch (e) {
+            console.error(e);
+            handleGuestUser();
+            localStorage.removeItem('discord_token');
+        }
     } else {
         handleGuestUser();
     }
 }
 
-async function simulateLogin() {
-    const { data, error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'discord',
-    });
-    if (error) console.error(error);
+function simulateLogin() {
+    window.location.href = `${WORKER_URL}/auth/login`;
 }
 
-async function simulateLogout() {
-    const { error } = await supabaseClient.auth.signOut();
-    if (!error) {
-        window.location.reload();
-    }
+function simulateLogout() {
+    localStorage.removeItem('discord_token');
+    window.location.reload();
 }
 
 function updateUI(user) {
@@ -39,8 +50,10 @@ function updateUI(user) {
     if (loginBtn) loginBtn.classList.add('hidden');
     if (userInfo) userInfo.classList.remove('hidden');
     
-    const discordName = user.user_metadata.full_name || user.user_metadata.name;
-    const discordAvatar = user.user_metadata.avatar_url;
+    const discordName = user.global_name || user.username;
+    const discordAvatar = user.avatar 
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
+        : 'images/default-user.png';
     
     const nameEls = document.querySelectorAll('.user-name');
     const miniAvatars = document.querySelectorAll('.mini-avatar');
@@ -59,113 +72,47 @@ function updateUI(user) {
 
 async function checkSubscriptionStatus(user) {
     const input = document.querySelector('.newsletter-form input');
-    const form = document.querySelector('.newsletter-form');
-
     if (input) {
         input.value = user.email;
         input.setAttribute('readonly', true);
-        
-        if (!document.querySelector('.input-lock')) {
-            const lock = document.createElement('div');
-            lock.className = 'input-lock';
-            lock.innerHTML = '<i class="fas fa-shield-alt"></i>';
-            if (form) form.prepend(lock);
-        }
     }
+    
+    const token = localStorage.getItem('discord_token');
+    if (!token) return;
 
-    const { data, error } = await supabaseClient
-        .from('subscribers')
-        .select('*')
-        .eq('email', user.email) 
-        .maybeSingle();
-
-    if (data) {
-        setSubscribeState('subscribed');
-    } else {
-        const hasOptedOut = user.user_metadata.unsubscribed_newsletter === true;
-
-        if (!hasOptedOut) {
-            const { error: insertError } = await supabaseClient
-                .from('subscribers')
-                .insert({
-                    email: user.email,
-                    user_uuid: user.id
-                });
-            
-            if (!insertError) {
-                setSubscribeState('subscribed');
-            } else {
-                console.error("Auto-sub failed:", insertError);
-            }
-        } else {
-            setSubscribeState('unsubscribed');
-        }
+    try {
+        const res = await fetch(`${WORKER_URL}/api/newsletter`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setSubscribeState(data.subscribed ? 'subscribed' : 'unsubscribed');
+    } catch (e) {
+        console.error("Failed to check subscription:", e);
     }
 }
 
 async function handleNewsletter(e) {
-    e.preventDefault(); 
-    
+    e.preventDefault();
     const button = document.querySelector('.newsletter-form button');
-    
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) return;
+    const token = localStorage.getItem('discord_token');
+    if (!token) return;
 
-    if (button.classList.contains('is-subscribed')) {
-        if(!confirm('Unsubscribe from updates?')) return;
-        
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        
-        const { error } = await supabaseClient
-            .from('subscribers')
-            .delete()
-            .eq('email', user.email);
-
-        if (!error) {
-            await supabaseClient.auth.updateUser({
-                data: { unsubscribed_newsletter: true }
-            });
-            setSubscribeState('unsubscribed');
-        } else {
-            console.error(error);
-            alert("Error unsubscribing.");
-            setSubscribeState('subscribed');
-        }
-        return;
-    }
+    const isSubbed = button.classList.contains('is-subscribed');
+    if (isSubbed && !confirm('Unsubscribe from updates?')) return;
 
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-    const { data: existingUser } = await supabaseClient
-        .from('subscribers')
-        .select('email')
-        .eq('email', user.email)
-        .maybeSingle();
-
-    if (existingUser) {
-        setSubscribeState('subscribed');
-        return;
-    }
-
-    const { error } = await supabaseClient
-        .from('subscribers')
-        .insert({ 
-            email: user.email,     
-            user_uuid: user.id     
+    try {
+        const res = await fetch(`${WORKER_URL}/api/newsletter`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-
-    if (error) {
-        console.error("Supabase Error:", error);
-        button.innerHTML = '<i class="fas fa-times"></i>'; 
-        alert('Error: ' + error.message);
-        setTimeout(() => { 
-            button.innerHTML = '<i class="fas fa-chevron-right"></i>'; 
-        }, 2000);
-    } else {
-        await supabaseClient.auth.updateUser({
-            data: { unsubscribed_newsletter: false }
-        });
-        setSubscribeState('subscribed');
+        const data = await res.json();
+        setSubscribeState(data.subscribed ? 'subscribed' : 'unsubscribed');
+    } catch (e) {
+        console.error("Failed to toggle subscription:", e);
+        alert("Error updating subscription.");
+        setSubscribeState(isSubbed ? 'subscribed' : 'unsubscribed');
     }
 }
 
@@ -180,21 +127,13 @@ function setSubscribeState(state) {
         form.classList.add('success');
         input.value = "Subscribed"; 
         input.style.color = "#4CAF50"; 
-        
         button.innerHTML = '<i class="fas fa-times"></i>';
         button.classList.add('is-subscribed');
-        button.title = "Unsubscribe";
     } else {
         form.classList.remove('success');
         input.style.color = "white"; 
-        
         button.innerHTML = '<i class="fas fa-chevron-right"></i>';
         button.classList.remove('is-subscribed');
-        button.title = "Subscribe";
-        
-        supabaseClient.auth.getUser().then(({data}) => {
-            if(data.user) input.value = data.user.email;
-        });
     }
 }
 
@@ -203,7 +142,6 @@ document.addEventListener('submit', (e) => {
         handleNewsletter(e);
     }
 });
-
 
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
@@ -233,7 +171,6 @@ document.addEventListener('click', function(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('lightModeToggle');
-    
     const lightmodelist = [
         "MY EYES", "We don't do that here", "Nuh uh", "Absolutely not",
         "Psht, no", "Who hurt you?", "Fuh naw", "Oh hell no",
@@ -254,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 setTimeout(() => {
                     e.target.checked = false;
-
                     const slider = e.target.nextElementSibling;
                     slider.classList.add('shake-reject');
                     setTimeout(() => slider.classList.remove('shake-reject'), 400);
@@ -262,10 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     snark.innerText = lightmodelist[Math.floor(Math.random() * lightmodelist.length)];
                     snark.classList.add('visible');
 
-                    setTimeout(() => {
-                        snark.classList.remove('visible');
-                    }, 2000);
-                    
+                    setTimeout(() => snark.classList.remove('visible'), 2000);
                 }, 200); 
             }
         });
@@ -274,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function handleGuestUser() {
     if (!window.location.href.includes('/blog/')) return;
-
     if (sessionStorage.getItem('toastDismissed')) return;
 
     setTimeout(() => {
