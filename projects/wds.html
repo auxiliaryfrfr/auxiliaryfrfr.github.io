@@ -207,7 +207,6 @@
         let gameState = 'MENU', gameMode = '10s', score = 0, timeRemaining = 0;
         let gameLoop = null, spawnLoop = null, activeCountry = null, currentUser = null;
         const FORBIDDEN = ["Poland", "Ukraine", "Palestine", "Sudan", "State of Palestine"];
-        const WORKER_URL = 'https://auth-worker.evie-s-account.workers.dev';
 
         window.addEventListener('load', async () => {
             const token = localStorage.getItem('discord_token');
