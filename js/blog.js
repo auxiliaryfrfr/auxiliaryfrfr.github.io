@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = post.getAttribute('data-title').toLowerCase();
             const tags = post.getAttribute('data-tags');
             
-            const matchesSearch = title.includes(query);
+            const bioText = post.innerText.toLowerCase(); 
+            
+            const matchesSearch = title.includes(query) || bioText.includes(query);
             const matchesTag = currentTag === 'all' || tags.includes(currentTag);
 
             if (matchesSearch && matchesTag) {
