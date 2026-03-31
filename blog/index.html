@@ -146,7 +146,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        
         const mobileFilter = document.getElementById('mobileFilterDrop');
         
         if (mobileFilter) {
@@ -160,18 +159,15 @@
                     mobileFilter.classList.remove('open');
                 }
             });
-        } else {
-            console.log("Error: Could not find #mobileFilterDrop");
         }
 
         window.selectMobileFilter = function(tagValue, displayName) {
-            
             if (mobileFilter) {
                 const label = mobileFilter.querySelector('.dropdown-trigger span');
                 if (label) label.innerText = "Filter: " + displayName;
             }
 
-            const desktopBtn = document.querySelector(`.filter-tag[data-tag="${tagValue}"]`);
+            const desktopBtn = document.querySelector(`#filterDropdown li[data-tag="${tagValue}"]`);
             
             if (desktopBtn) {
                 desktopBtn.click(); 
