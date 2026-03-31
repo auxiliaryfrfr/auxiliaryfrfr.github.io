@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             options.forEach(opt => opt.classList.remove('active-option'));
             option.classList.add('active-option');
 
-            currentSortText.textContent = option.textContent;
+            currentSortText.textContent = "Sort: " + option.textContent;
             currentSortValue = option.getAttribute('data-value');
             
             dropdown.classList.remove('open');
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             filterDropdown.classList.toggle('open');
-            sortDropdown.classList.remove('open'); 
+            dropdown.classList.remove('open'); 
         });
 
         filterOptions.forEach(option => {

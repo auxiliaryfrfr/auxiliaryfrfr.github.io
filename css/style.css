@@ -1711,3 +1711,7 @@ input:checked + .slider:before {
     background: rgba(255, 128, 171, 0.1);
     color: #fff;
 }
+
+.mobile-only-dropdown {
+    z-index: 100 !important; 
+}
