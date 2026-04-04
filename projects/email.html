@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Email Previewer</title>
+
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+	<link rel="icon" href="../images/projects.svg" type="image/svg+xml">
+	<meta property="og:title" content="AUXILIARYFRFR - Email Previewer">
+	<meta property="og:description" content="Preview emails instantly with HTML and plain text support.">
+	<meta name="theme-color" content="#ff80ab">
+	<meta property="og:image" content="https://auxiliaryfrfr.com/images/embed.png">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<style>
+		:root {
+			--lab-bg-1: #07070d;
+			--lab-bg-2: #11121e;
+			--lab-card: rgba(16, 17, 28, 0.85);
+			--lab-card-strong: rgba(12, 13, 22, 0.95);
+			--lab-border: rgba(255, 255, 255, 0.09);
+			--lab-text: #eaeafd;
+			--lab-dim: #9898b6;
+			--lab-pink: #ff80ab;
+			--lab-blue: #6cd9ff;
+			--lab-green: #7effbd;
+		}
+
+		body {
+			background:
+				radial-gradient(1200px 600px at 12% 10%, rgba(255, 128, 171, 0.14), transparent 70%),
+				radial-gradient(1000px 540px at 87% 24%, rgba(108, 217, 255, 0.11), transparent 70%),
+				linear-gradient(150deg, var(--lab-bg-1), var(--lab-bg-2));
+			color: var(--lab-text);
+			min-height: 100vh;
+		}
+
+		.lab-shell {
+			width: min(1240px, 100% - 2.5rem);
+			margin: 110px auto 30px;
+			position: relative;
+			z-index: 2;
+		}
+
+		.lab-hero {
+			background: linear-gradient(140deg, rgba(255, 128, 171, 0.13), rgba(108, 217, 255, 0.08));
+			border: 1px solid var(--lab-border);
+			border-radius: 22px;
+			padding: 1.6rem 1.6rem;
+			margin-bottom: 1.2rem;
+			backdrop-filter: blur(8px);
+			box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35);
+		}
+
+		.lab-hero-top {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 0.9rem;
+			flex-wrap: wrap;
+		}
+
+		.lab-title {
+			margin: 0;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: clamp(1.55rem, 3.2vw, 2.3rem);
+			letter-spacing: -0.5px;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
+
+		.lab-title .highlight {
+			color: var(--lab-pink);
+			text-shadow: 0 0 24px rgba(255, 128, 171, 0.5);
+		}
+
+		.lab-sub {
+			margin: 0;
+			color: #d6d6ee;
+			max-width: 820px;
+			line-height: 1.55;
+			font-family: 'Space Grotesk', sans-serif;
+		}
+
+		.pulse-indicator {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 8px 12px;
+			border-radius: 999px;
+			border: 1px solid rgba(126, 255, 189, 0.4);
+			color: var(--lab-green);
+			font-size: 0.74rem;
+			font-family: 'IBM Plex Mono', monospace;
+			text-transform: uppercase;
+			letter-spacing: 0.8px;
+			background: rgba(126, 255, 189, 0.07);
+		}
+
+		.pulse-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: var(--lab-green);
+			box-shadow: 0 0 12px rgba(126, 255, 189, 0.9);
+			animation: pulse 1.7s ease-in-out infinite;
+		}
+
+		@keyframes pulse {
+			0%, 100% { opacity: 1; transform: scale(1); }
+			50% { opacity: 0.45; transform: scale(0.75); }
+		}
+
+		.lab-grid {
+			display: grid;
+			grid-template-columns: 1.05fr 1fr;
+			gap: 1rem;
+		}
+
+		.panel {
+			background: var(--lab-card);
+			border: 1px solid var(--lab-border);
+			border-radius: 18px;
+			backdrop-filter: blur(9px);
+			box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+			overflow: hidden;
+			min-height: 640px;
+		}
+
+		.panel-head {
+			padding: 1rem 1.2rem;
+			border-bottom: 1px solid var(--lab-border);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 10px;
+			background: rgba(255, 255, 255, 0.01);
+		}
+
+		.panel-head h2 {
+			margin: 0;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.92rem;
+			text-transform: uppercase;
+			letter-spacing: 0.7px;
+			color: #fafaff;
+		}
+
+		.panel-head p {
+			margin: 4px 0 0;
+			color: var(--lab-dim);
+			font-size: 0.78rem;
+			font-family: 'IBM Plex Mono', monospace;
+		}
+
+		.payload-wrap {
+			padding: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.8rem;
+		}
+
+		.action-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.btn-lab {
+			border: 1px solid rgba(255, 255, 255, 0.14);
+			background: rgba(255, 255, 255, 0.03);
+			color: #f5f5ff;
+			padding: 8px 12px;
+			border-radius: 10px;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.75rem;
+			cursor: pointer;
+			text-transform: uppercase;
+			letter-spacing: 0.6px;
+			transition: all 0.22s ease;
+		}
+
+		.btn-lab:hover {
+			transform: translateY(-1px);
+			border-color: rgba(255, 128, 171, 0.6);
+			color: var(--lab-pink);
+		}
+
+		.btn-main {
+			border-color: rgba(255, 128, 171, 0.65);
+			background: rgba(255, 128, 171, 0.12);
+			color: #fff;
+		}
+
+		.payload-input {
+			width: 100%;
+			min-height: 430px;
+			resize: vertical;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			border-radius: 14px;
+			background: var(--lab-card-strong);
+			color: #ececff;
+			padding: 1rem;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.82rem;
+			line-height: 1.45;
+			tab-size: 4;
+			outline: none;
+			transition: border-color 0.22s ease, box-shadow 0.22s ease;
+		}
+
+		.payload-input:focus {
+			border-color: rgba(108, 217, 255, 0.7);
+			box-shadow: 0 0 0 3px rgba(108, 217, 255, 0.14);
+		}
+
+		.status-line {
+			min-height: 20px;
+			color: var(--lab-dim);
+			font-size: 0.75rem;
+			font-family: 'IBM Plex Mono', monospace;
+		}
+
+		.status-line.good {
+			color: var(--lab-green);
+		}
+
+		.status-line.warn {
+			color: #ffc77a;
+		}
+
+		.status-line.error {
+			color: #ff7d7d;
+		}
+
+		.hint-box {
+			border: 1px dashed rgba(255, 255, 255, 0.13);
+			border-radius: 12px;
+			padding: 0.75rem;
+			background: rgba(255, 255, 255, 0.02);
+			color: #bbbcd9;
+			font-size: 0.76rem;
+			font-family: 'Space Grotesk', sans-serif;
+			line-height: 1.5;
+		}
+
+		.hint-box strong {
+			color: #fff;
+			font-weight: 600;
+		}
+
+		.preview-wrap {
+			padding: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.8rem;
+			height: calc(100% - 68px);
+		}
+
+		.mode-row {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.mode-btn {
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			background: rgba(255, 255, 255, 0.03);
+			color: #ddd;
+			border-radius: 999px;
+			padding: 6px 11px;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.68rem;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			cursor: pointer;
+		}
+
+		.mode-btn.active {
+			border-color: rgba(255, 128, 171, 0.7);
+			color: #fff;
+			background: rgba(255, 128, 171, 0.2);
+		}
+
+		.view-status {
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.67rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #9fa0c4;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			opacity: 0;
+			transform: translateY(2px);
+			transition: opacity 0.2s ease, transform 0.2s ease;
+			pointer-events: none;
+		}
+
+		.view-status.show {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		.view-status .spin {
+			width: 12px;
+			height: 12px;
+			border: 2px solid rgba(159, 160, 196, 0.35);
+			border-top-color: var(--lab-blue);
+			border-radius: 50%;
+			animation: spin 0.7s linear infinite;
+			display: inline-block;
+		}
+
+		.view-status.ready .spin {
+			border: none;
+			width: auto;
+			height: auto;
+			animation: none;
+		}
+
+		@keyframes spin {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		.email-stage {
+			border: 1px solid rgba(255, 255, 255, 0.11);
+			border-radius: 14px;
+			background: #fff;
+			overflow: hidden;
+			height: 420px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.email-head {
+			height: 42px;
+			background: linear-gradient(120deg, #f6f7fc, #eff3f8);
+			border-bottom: 1px solid #e8e8ee;
+			display: flex;
+			align-items: center;
+			padding: 0 12px;
+			gap: 8px;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.68rem;
+			color: #70748a;
+			text-transform: uppercase;
+			letter-spacing: 0.45px;
+		}
+
+		.head-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: #d2d5e4;
+		}
+
+		.gmail-meta {
+			padding: 12px 14px;
+			border-bottom: 1px solid #eceef4;
+			background: #fff;
+		}
+
+		.gmail-subject {
+			margin: 0 0 10px;
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: 1rem;
+			font-weight: 600;
+			line-height: 1.35;
+			color: #1e2334;
+		}
+
+		.gmail-from-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.sender-badge {
+			width: 38px;
+			height: 38px;
+			border-radius: 50%;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.84rem;
+			font-weight: 700;
+			color: #111;
+			text-transform: uppercase;
+			flex-shrink: 0;
+		}
+
+		.sender-details {
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+		}
+
+		.sender-line {
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: 0.83rem;
+			color: #20263a;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.recipient-line {
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.67rem;
+			color: #687085;
+			line-height: 1.35;
+			word-break: break-word;
+		}
+
+		.recipient-line span {
+			color: #3a4055;
+		}
+
+		.email-content-shell {
+			position: relative;
+			flex: 1;
+			min-height: 0;
+		}
+
+		.mail-frame,
+		.text-view {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+
+		.text-view {
+			margin: 0;
+			padding: 14px;
+			background: #f9f9fe;
+			color: #1f2233;
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: 0.94rem;
+			line-height: 1.55;
+			white-space: pre-wrap;
+			overflow-y: auto;
+			display: none;
+		}
+
+		.raw-block {
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 12px;
+			background: rgba(0, 0, 0, 0.25);
+			overflow: hidden;
+		}
+
+		.raw-head {
+			padding: 0.55rem 0.8rem;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.72rem;
+			color: #a8a9ca;
+			text-transform: uppercase;
+			letter-spacing: 0.6px;
+		}
+
+		.raw-json {
+			margin: 0;
+			max-height: 170px;
+			overflow: auto;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.74rem;
+			line-height: 1.45;
+			color: #d2d3ed;
+			padding: 0.8rem;
+			background: rgba(255, 255, 255, 0.01);
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+
+		.return-row {
+			margin-top: 0.85rem;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		.return-home {
+			border: 1px solid rgba(255, 255, 255, 0.17);
+			color: #dcdcff;
+			text-decoration: none;
+			padding: 9px 14px;
+			border-radius: 10px;
+			font-family: 'IBM Plex Mono', monospace;
+			font-size: 0.74rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			transition: all 0.2s ease;
+			background: rgba(255, 255, 255, 0.02);
+		}
+
+		.return-home:hover {
+			border-color: rgba(255, 128, 171, 0.7);
+			color: var(--lab-pink);
+		}
+
+		@media (max-width: 1080px) {
+			.lab-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.panel {
+				min-height: auto;
+			}
+
+			.payload-input {
+				min-height: 360px;
+			}
+
+			.email-stage {
+				height: 340px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.lab-shell {
+				width: min(1240px, 100% - 1rem);
+				margin-top: 82px;
+			}
+
+			.lab-hero {
+				border-radius: 14px;
+				padding: 1rem;
+			}
+
+			.panel {
+				border-radius: 14px;
+			}
+
+			.panel-head {
+				padding: 0.8rem;
+			}
+
+			.payload-wrap,
+			.preview-wrap {
+				padding: 0.75rem;
+			}
+
+			.payload-input {
+				min-height: 300px;
+				font-size: 0.78rem;
+			}
+
+			.email-stage {
+				height: 360px;
+			}
+
+			.gmail-subject {
+				font-size: 0.92rem;
+			}
+
+			.sender-badge {
+				width: 34px;
+				height: 34px;
+				font-size: 0.78rem;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<div id="app-container">
+		<main class="lab-shell">
+			<section class="lab-hero">
+				<div class="lab-hero-top">
+					<h1 class="lab-title">Email <span class="highlight">Previewer</span></h1>
+					<div class="pulse-indicator">
+						<span class="pulse-dot"></span>
+						Live Renderer
+					</div>
+				</div>
+				<p class="lab-sub">
+					Paste normal text, or paste full payload objects with fields like <strong>from / to / cc / bcc / subject / html / text</strong>.
+					This previews email content exactly as recipients may read it, including custom HTML template blocks.
+				</p>
+			</section>
+
+			<section class="lab-grid">
+				<div class="panel">
+					<div class="panel-head">
+						<div>
+							<h2><i class="fas fa-code"></i> Payload Input</h2>
+							<p>Supports JS-style object snippets and plain text drafts.</p>
+						</div>
+					</div>
+
+					<div class="payload-wrap">
+						<div class="action-row">
+							<button class="btn-lab" id="btnSampleTemplate"><i class="fas fa-book-open"></i> Load HTML Template</button>
+							<button class="btn-lab" id="btnSampleText"><i class="fas fa-file-lines"></i> Load Plain Text</button>
+							<button class="btn-lab" id="btnClear"><i class="fas fa-trash"></i> Clear</button>
+						</div>
+
+						<textarea id="payloadInput" class="payload-input" spellcheck="false"></textarea>
+
+						<div id="parseStatus" class="status-line">Live preview updates as you type.</div>
+
+						<div class="hint-box">
+							<strong>Tip:</strong> If you're using HTML for the first time, try studying the sample template to see how different tags and styles are rendered. You can also use your own custom HTML with inline styles!
+						</div>
+
+						<div class="return-row">
+							<a class="return-home" href="../projects/index.html"><i class="fas fa-arrow-left"></i> Back To Projects</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel">
+					<div class="panel-head">
+						<div>
+							<h2><i class="fas fa-envelope-open-text"></i> Live Preview</h2>
+							<p>Header fields + rendered content + parsed payload summary.</p>
+						</div>
+					</div>
+
+					<div class="preview-wrap">
+						<div class="mode-row">
+							<button id="modeHtml" class="mode-btn active" type="button">HTML View</button>
+							<button id="modeText" class="mode-btn" type="button">Text View</button>
+							<span id="viewStatus" class="view-status" aria-live="polite"></span>
+						</div>
+
+						<div class="email-stage">
+							<div class="email-head">
+								<span class="head-dot"></span>
+								<span class="head-dot"></span>
+								<span class="head-dot"></span>
+								<span>Email Preview</span>
+							</div>
+							<div class="gmail-meta">
+								<h3 class="gmail-subject" id="metaSubject">(No subject)</h3>
+								<div class="gmail-from-row">
+									<div id="senderBadge" class="sender-badge">PS</div>
+									<div class="sender-details">
+										<div class="sender-line">From: <span id="metaFrom">-</span></div>
+										<div class="recipient-line">To: <span id="metaTo">-</span></div>
+										<div class="recipient-line">Cc: <span id="metaCc">-</span></div>
+										<div class="recipient-line">Bcc: <span id="metaBcc">-</span></div>
+									</div>
+								</div>
+							</div>
+							<div class="email-content-shell">
+								<iframe id="mailFrame" class="mail-frame" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>
+								<pre id="textView" class="text-view"></pre>
+							</div>
+						</div>
+
+						<div class="raw-block">
+							<div class="raw-head">Parsed Summary</div>
+							<pre id="parsedJson" class="raw-json">{}</pre>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+	</div>
+
+	<script>
+		const htmlTemplateSample = `{
+	from: 'johndoe@example.com',
+	to: ['janedoe@example.com', 'jaydoe@example.com'],
+	cc: 'jamiedoe@example.com',
+	bcc: 'jeandoe@example.com',
+	subject: 'This is a Subject',
+	html: \`
+		<div style="font-family: Arial, sans-serif; color: #2a2a2a; line-height: 1.6; max-width: 640px; margin: 0 auto;">
+			<h1 style="margin-bottom: 10px; color: #1f2937;">This is a Title</h1>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget massa vitae lectus ullamcorper dictum.</p>
+
+			<h3 style="color: #374151; margin-top: 24px;">This is a small Title</h3>
+			<p>
+				Lorem ipsum <strong>this is bold text</strong>, <em>this is italic text</em>,
+				<u>this is underlined text</u>, <mark>this is highlighted text</mark>,
+				<code>this-is-inline-code</code>, <del>this is deleted text</del>,
+				H<sub>2</sub>O and X<sup>2</sup>.
+			</p>
+
+			<p>
+				<a href="https://example.com" style="color: #2563eb;">This is Hypertext</a>
+			</p>
+
+			<p style="margin-top: 18px;">
+				<a href="https://example.com" style="background-color: #2563eb; color: #fff; padding: 10px 18px; text-decoration: none; border-radius: 6px; font-weight: 600;">This is a Button</a>
+			</p>
+
+			<ul style="padding-left: 20px; margin: 18px 0;">
+				<li>Lorem ipsum dolor sit amet.</li>
+				<li>Consectetur adipiscing elit.</li>
+				<li>Sed do eiusmod tempor incididunt.</li>
+			</ul>
+
+			<ol style="padding-left: 20px; margin: 18px 0;">
+				<li>Ut enim ad minim veniam.</li>
+				<li>Quis nostrud exercitation ullamco.</li>
+				<li>Laboris nisi ut aliquip ex ea commodo.</li>
+			</ol>
+
+			<blockquote style="margin: 18px 0; padding: 10px 14px; border-left: 4px solid #d1d5db; background: #f9fafb;">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+			</blockquote>
+
+			<table style="border-collapse: collapse; width: 100%; margin-top: 14px;">
+				<tr>
+					<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Column One</th>
+					<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Column Two</th>
+				</tr>
+				<tr>
+					<td style="border: 1px solid #d1d5db; padding: 8px;">Lorem ipsum</td>
+					<td style="border: 1px solid #d1d5db; padding: 8px;">Dolor sit amet</td>
+				</tr>
+			</table>
+
+			<hr style="border: 0; border-top: 1px solid #e5e7eb; margin-top: 24px;">
+			<p style="font-size: 12px; color: #6b7280;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+		</div>
+	\`,
+};`;
+
+		const textSample = `from: 'johndoe@example.com',
+to: ['janedoe@example.com', 'jaydoe@example.com'],
+cc: 'jamiedoe@example.com',
+bcc: 'jeandoe@example.com',
+subject: 'Lorem Ipsum',
+text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'`;
+
+		const payloadInput = document.getElementById('payloadInput');
+		const parseStatus = document.getElementById('parseStatus');
+		const parsedJson = document.getElementById('parsedJson');
+
+		const senderBadge = document.getElementById('senderBadge');
+		const metaFrom = document.getElementById('metaFrom');
+		const metaTo = document.getElementById('metaTo');
+		const metaCc = document.getElementById('metaCc');
+		const metaBcc = document.getElementById('metaBcc');
+		const metaSubject = document.getElementById('metaSubject');
+
+		const mailFrame = document.getElementById('mailFrame');
+		const textView = document.getElementById('textView');
+		const modeHtml = document.getElementById('modeHtml');
+		const modeText = document.getElementById('modeText');
+		const viewStatus = document.getElementById('viewStatus');
+
+		const defaultMeta = {
+			from: 'Preview Sender <sender@example.com>',
+			to: 'recipient@example.com',
+			cc: '-',
+			bcc: '-',
+			subject: '(No subject)'
+		};
+
+		let cachedHtml = '';
+		let cachedText = '';
+		let currentMode = 'html';
+		let modeFeedbackTimer = null;
+
+		function escapeHtml(value) {
+			return String(value)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#039;');
+		}
+
+		function sanitizeToken(token) {
+			let result = token.trim();
+			if (!result) return '';
+
+			result = result.replace(/^\[|\]$/g, '').trim();
+			if (
+				(result.startsWith("'") && result.endsWith("'")) ||
+				(result.startsWith('"') && result.endsWith('"')) ||
+				(result.startsWith('`') && result.endsWith('`'))
+			) {
+				result = result.slice(1, -1);
+			}
+
+			return result.trim();
+		}
+
+		function parseAddressValue(rawValue) {
+			if (!rawValue) return '-';
+
+			const cleaned = rawValue.trim();
+			const listSource = cleaned.startsWith('[') && cleaned.endsWith(']')
+				? cleaned.slice(1, -1)
+				: cleaned;
+
+			const parts = listSource.split(',').map((part) => sanitizeToken(part)).filter(Boolean);
+			return parts.length ? parts.join(', ') : '-';
+		}
+
+		function extractField(raw, key) {
+			const label = `${key}:`;
+			const lowerRaw = raw.toLowerCase();
+			const index = lowerRaw.indexOf(label.toLowerCase());
+			if (index === -1) return null;
+
+			let cursor = index + label.length;
+			while (cursor < raw.length && /\s/.test(raw[cursor])) {
+				cursor += 1;
+			}
+
+			if (cursor >= raw.length) return '';
+
+			const quote = raw[cursor];
+			if (quote === "'" || quote === '"' || quote === '`') {
+				cursor += 1;
+				let output = '';
+
+				while (cursor < raw.length) {
+					const current = raw[cursor];
+					const next = raw[cursor + 1];
+					if (current === '\\' && next !== undefined) {
+						if (next === 'n') {
+							output += '\n';
+						} else if (next === 't') {
+							output += '\t';
+						} else {
+							output += next;
+						}
+						cursor += 2;
+						continue;
+					}
+					if (current === quote) {
+						return output.trim();
+					}
+					output += current;
+					cursor += 1;
+				}
+
+				return output.trim();
+			}
+
+			let depth = 0;
+			let output = '';
+			while (cursor < raw.length) {
+				const current = raw[cursor];
+				if (current === '[' || current === '{' || current === '(') depth += 1;
+				if (current === ']' || current === '}' || current === ')') depth = Math.max(0, depth - 1);
+				if (current === ',' && depth === 0) break;
+				if (current === '\n' && depth === 0) {
+					const rest = raw.slice(cursor + 1);
+					if (/^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*:/.test(rest)) break;
+				}
+				output += current;
+				cursor += 1;
+			}
+
+			return output.trim();
+		}
+
+		function htmlToText(html) {
+			if (html === cachedHtml) {
+				return cachedText;
+			}
+			const holder = document.createElement('div');
+			holder.innerHTML = html;
+			cachedHtml = html;
+			cachedText = (holder.textContent || holder.innerText || '').trim();
+			return cachedText;
+		}
+
+		function getFallbackHtml(text) {
+			const escaped = escapeHtml(text || '');
+			const withBreaks = escaped.replace(/\n/g, '<br>');
+
+			return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+	body { font-family: Arial, Helvetica, sans-serif; color: #1f2133; line-height: 1.6; margin: 0; padding: 24px; background: #ffffff; }
+	.mail-shell { max-width: 680px; margin: 0 auto; }
+</style>
+</head>
+<body>
+	<div class="mail-shell">${withBreaks}</div>
+</body>
+</html>`;
+		}
+
+		function toSafeDoc(html) {
+			if (!html || !html.trim()) {
+				return getFallbackHtml('No content found yet.');
+			}
+
+			if (/<html[\s>]/i.test(html)) {
+				return html;
+			}
+
+			return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+	body { margin: 0; padding: 24px; background: #fff; }
+</style>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+		}
+
+		function setStatus(message, level) {
+			parseStatus.className = `status-line ${level || ''}`.trim();
+			parseStatus.textContent = message;
+		}
+
+		function hashString(input) {
+			let hash = 0;
+			for (let i = 0; i < input.length; i += 1) {
+				hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
+			}
+			return hash;
+		}
+
+		function getSenderProfile(fromValue) {
+			const source = (fromValue || '').trim();
+			const display = source.includes('<') ? source.split('<')[0].trim() : source;
+			const cleaned = (display || 'Preview Sender').replace(/['"`]/g, '').trim();
+			const words = cleaned.split(/\s+/).filter(Boolean);
+			const initials = (words.slice(0, 2).map((word) => word[0]).join('') || cleaned.charAt(0) || '?').toUpperCase();
+			const hue = hashString(cleaned) % 360;
+			const background = `hsl(${hue}deg 70% 72%)`;
+			return { initials, background };
+		}
+
+		function refreshSenderBadge(fromValue) {
+			const sender = getSenderProfile(fromValue);
+			senderBadge.textContent = sender.initials;
+			senderBadge.style.background = sender.background;
+		}
+
+		function setViewStatus(text, isReady) {
+			if (!viewStatus) return;
+			if (modeFeedbackTimer) {
+				window.clearTimeout(modeFeedbackTimer);
+			}
+
+			viewStatus.className = `view-status show${isReady ? ' ready' : ''}`;
+			viewStatus.innerHTML = isReady
+				? '<span class="spin">✓</span>' + text
+				: '<span class="spin"></span>' + text;
+
+			modeFeedbackTimer = window.setTimeout(() => {
+				viewStatus.className = 'view-status';
+				viewStatus.textContent = '';
+			}, isReady ? 900 : 1300);
+		}
+
+		function setMode(mode) {
+			if (mode === currentMode) {
+				return;
+			}
+
+			const modeTextLabel = mode === 'text' ? 'text view' : 'html view';
+			setViewStatus(`Loading ${modeTextLabel}...`, false);
+
+			window.requestAnimationFrame(() => {
+				if (mode === 'text') {
+					modeHtml.classList.remove('active');
+					modeText.classList.add('active');
+					mailFrame.style.display = 'none';
+					textView.style.display = 'block';
+				} else {
+					modeHtml.classList.add('active');
+					modeText.classList.remove('active');
+					mailFrame.style.display = 'block';
+					textView.style.display = 'none';
+				}
+
+				currentMode = mode;
+				setViewStatus(`${modeTextLabel} ready`, true);
+			});
+		}
+
+		function renderParsed(parsed) {
+			metaFrom.textContent = parsed.from || defaultMeta.from;
+			metaTo.textContent = parsed.to || defaultMeta.to;
+			metaCc.textContent = parsed.cc || defaultMeta.cc;
+			metaBcc.textContent = parsed.bcc || defaultMeta.bcc;
+			metaSubject.textContent = parsed.subject || defaultMeta.subject;
+			refreshSenderBadge(metaFrom.textContent);
+
+			const hasHtml = Boolean(parsed.html && parsed.html.trim());
+			const hasText = Boolean(parsed.text && parsed.text.trim());
+			const textBody = hasText ? parsed.text : (hasHtml ? htmlToText(parsed.html) : '');
+			const htmlBody = hasHtml ? parsed.html : getFallbackHtml(textBody || 'No content found yet.');
+
+			mailFrame.srcdoc = toSafeDoc(htmlBody);
+			textView.textContent = textBody || 'No plain text content available.';
+
+			setMode(hasHtml ? 'html' : 'text');
+
+			parsedJson.textContent = JSON.stringify({
+				from: parsed.from || null,
+				to: parsed.to === '-' ? [] : String(parsed.to || '').split(',').map((entry) => entry.trim()).filter(Boolean),
+				cc: parsed.cc === '-' ? [] : String(parsed.cc || '').split(',').map((entry) => entry.trim()).filter(Boolean),
+				bcc: parsed.bcc === '-' ? [] : String(parsed.bcc || '').split(',').map((entry) => entry.trim()).filter(Boolean),
+				subject: parsed.subject || null,
+				hasHtml,
+				hasText,
+				htmlLength: hasHtml ? parsed.html.length : 0,
+				textLength: textBody ? textBody.length : 0
+			}, null, 2);
+		}
+
+		function parsePayload(rawInput) {
+			const raw = rawInput.trim();
+			if (!raw) {
+				setStatus('Input is empty. Load a sample or paste your payload first.', 'warn');
+				return null;
+			}
+
+			const looksLikePayload = /\b(from|to|cc|bcc|subject|html|text)\s*:/.test(raw);
+
+			if (!looksLikePayload) {
+				return {
+					from: defaultMeta.from,
+					to: defaultMeta.to,
+					cc: defaultMeta.cc,
+					bcc: '-',
+					subject: 'Plain Text Draft',
+					text: raw,
+					html: ''
+				};
+			}
+
+			const parsed = {
+				from: sanitizeToken(extractField(raw, 'from') || ''),
+				to: parseAddressValue(extractField(raw, 'to') || ''),
+				cc: parseAddressValue(extractField(raw, 'cc') || ''),
+				bcc: parseAddressValue(extractField(raw, 'bcc') || ''),
+				subject: sanitizeToken(extractField(raw, 'subject') || ''),
+				html: extractField(raw, 'html') || '',
+				text: extractField(raw, 'text') || ''
+			};
+
+			if (!parsed.html && !parsed.text) {
+				setStatus('No html/text body found. Add html: `...` or text: \"...\".', 'error');
+				return null;
+			}
+
+			return parsed;
+		}
+
+		function runParse() {
+			try {
+				const parsed = parsePayload(payloadInput.value);
+				if (!parsed) return;
+
+				renderParsed(parsed);
+
+				const modeLabel = parsed.html ? (parsed.text ? 'HTML + text detected.' : 'HTML mode detected.') : 'Plain text mode detected.';
+				setStatus(`Preview updated successfully. ${modeLabel}`, 'good');
+			} catch (error) {
+				setStatus(`Parsing failed: ${error.message}`, 'error');
+			}
+		}
+
+		modeHtml.addEventListener('click', () => {
+			setMode('html');
+		});
+
+		modeText.addEventListener('click', () => {
+			setMode('text');
+		});
+
+		document.getElementById('btnSampleTemplate').addEventListener('click', () => {
+			payloadInput.value = htmlTemplateSample;
+			runParse();
+		});
+
+		document.getElementById('btnSampleText').addEventListener('click', () => {
+			payloadInput.value = textSample;
+			runParse();
+		});
+
+		document.getElementById('btnClear').addEventListener('click', () => {
+			payloadInput.value = '';
+			parsedJson.textContent = '{}';
+			metaFrom.textContent = '-';
+			metaTo.textContent = '-';
+			metaCc.textContent = '-';
+			metaBcc.textContent = '-';
+			metaSubject.textContent = '(No subject)';
+			refreshSenderBadge('Preview Sender');
+			mailFrame.srcdoc = getFallbackHtml('Preview cleared.');
+			textView.textContent = 'Preview cleared.';
+			modeHtml.classList.add('active');
+			modeText.classList.remove('active');
+			mailFrame.style.display = 'block';
+			textView.style.display = 'none';
+			currentMode = 'html';
+			setStatus('Cleared. Paste or load content to preview.', 'warn');
+		});
+
+		let parseTimer = null;
+		payloadInput.addEventListener('input', () => {
+			if (parseTimer) window.clearTimeout(parseTimer);
+			parseTimer = window.setTimeout(() => {
+				if (payloadInput.value.trim()) {
+					runParse();
+				}
+			}, 220);
+		});
+
+		payloadInput.value = htmlTemplateSample;
+		runParse();
+	</script>
+
+	<script src="../js/components.js"></script>
+	<script src="../js/auth.js"></script>
+</body>
+</html>
