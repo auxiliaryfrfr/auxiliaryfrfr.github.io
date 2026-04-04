@@ -37,12 +37,12 @@ function loadNavigation() {
         <div class="nav-left-group">
             <div class="logo">AUXILIARYFRFR</div>
             <ul class="nav-links desktop-menu">
-                <li><a href="${prefix}index.html" class="${isHome ? 'active' : ''}">Home</a></li>
-                <li><a href="${prefix}about/index.html" class="${isAbout ? 'active' : ''}">About</a></li>
-                <li><a href="${prefix}blog/index.html" class="${isBlog ? 'active' : ''}">Blog</a></li>
-                <li><a href="${prefix}projects/index.html" class="${isProjects ? 'active' : ''}">Projects</a></li>
-                <li><a href="${prefix}socials/index.html" class="${isSocials ? 'active' : ''}">Socials</a></li>
-                <li><a href="${prefix}dash/index.html" class="cyber-link">/dash</a></li>
+                <li><a href="${prefix}" class="${isHome ? 'active' : ''}">Home</a></li>
+                <li><a href="${prefix}about/" class="${isAbout ? 'active' : ''}">About</a></li>
+                <li><a href="${prefix}blog/" class="${isBlog ? 'active' : ''}">Blog</a></li>
+                <li><a href="${prefix}projects/" class="${isProjects ? 'active' : ''}">Projects</a></li>
+                <li><a href="${prefix}socials/" class="${isSocials ? 'active' : ''}">Socials</a></li>
+                <li><a href="${prefix}dash/" class="cyber-link">/dash</a></li>
             </ul>
         </div>
 
@@ -100,11 +100,11 @@ function loadNavigation() {
     </nav>
 
     <div class="mobile-menu" id="mobileMenu">
-        <a href="${prefix}index.html" class="${isHome ? 'active' : ''}">Home</a>
-        <a href="${prefix}about/index.html" class="${isAbout ? 'active' : ''}">About</a>
-        <a href="${prefix}blog/index.html" class="${isBlog ? 'active' : ''}">Blog</a>
-        <a href="${prefix}projects/index.html" class="${isProjects ? 'active' : ''}">Projects</a>
-        <a href="${prefix}socials/index.html" class="${isSocials ? 'active' : ''}">Socials</a>
+        <a href="${prefix}" class="${isHome ? 'active' : ''}">Home</a>
+        <a href="${prefix}about/" class="${isAbout ? 'active' : ''}">About</a>
+        <a href="${prefix}blog/" class="${isBlog ? 'active' : ''}">Blog</a>
+        <a href="${prefix}projects/" class="${isProjects ? 'active' : ''}">Projects</a>
+        <a href="${prefix}socials/" class="${isSocials ? 'active' : ''}">Socials</a>
     </div>
     `;
 
@@ -117,11 +117,11 @@ function loadFooter() {
     <footer class="glass-footer">
         <div class="footer-primary">
             <div class="footer-links" aria-label="Legal links">
-                <a href="${prefix}tos/index.html" class="footer-link" aria-label="Terms of Service" title="Terms of Service">
+                <a href="${prefix}tos/" class="footer-link" aria-label="Terms of Service" title="Terms of Service">
                     <i class="fa-solid fa-file-contract" aria-hidden="true"></i>
                     <span class="footer-link-label">Terms of Service</span>
                 </a>
-                <a href="${prefix}pp/index.html" class="footer-link" aria-label="Privacy Policy" title="Privacy Policy">
+                <a href="${prefix}pp/" class="footer-link" aria-label="Privacy Policy" title="Privacy Policy">
                     <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                     <span class="footer-link-label">Privacy Policy</span>
                 </a>
