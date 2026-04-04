@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getPathPrefix() {
     const path = window.location.pathname;
-    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/') || path.includes('/about/')) {
+    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/') || path.includes('/about/') || path.includes('/tos/') || path.includes('/pp/')) {
         return '../'; 
     }
     return './'; 
@@ -23,7 +23,9 @@ function loadNavigation() {
     const isProjects = path.includes('/projects/');
     const isSocials = path.includes('/socials/');
     const isAbout = path.includes('/about/');
-    const isHome = !isBlog && !isProjects && !isSocials && !isAbout && !path.includes('/dash/');
+    const isTos = path.includes('/tos/');
+    const isPp = path.includes('/pp/');
+    const isHome = !isBlog && !isProjects && !isSocials && !isAbout && !isTos && !isPp && !path.includes('/dash/');
 
     const navHTML = `
     <nav class="glass-nav">
@@ -105,11 +107,24 @@ function loadNavigation() {
 }
 
 function loadFooter() {
+    const prefix = getPathPrefix();
     const footerHTML = `
     <footer class="glass-footer">
-        <div class="status-indicator">
-            <span class="dot online"></span>
-            <span class="status-text">System Status: 99.98% Uptime</span>
+        <div class="footer-primary">
+            <div class="footer-links" aria-label="Legal links">
+                <a href="${prefix}tos/index.html" class="footer-link" aria-label="Terms of Service" title="Terms of Service">
+                    <i class="fa-solid fa-file-contract" aria-hidden="true"></i>
+                    <span class="footer-link-label">Terms of Service</span>
+                </a>
+                <a href="${prefix}pp/index.html" class="footer-link" aria-label="Privacy Policy" title="Privacy Policy">
+                    <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                    <span class="footer-link-label">Privacy Policy</span>
+                </a>
+            </div>
+            <a href="https://ko-fi.com/auxiliaryfrfr" class="kofi-support-btn" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-mug-hot"></i>
+                <span>Support Me</span>
+            </a>
         </div>
         <div class="copyright">
             <p>&copy; 2026 auxiliaryfrfr. MIT License.</p>
