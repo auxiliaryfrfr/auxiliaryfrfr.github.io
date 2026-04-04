@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.location.href.includes('/blog/')) {
         loadToast();
     }
+
+    setupBeanScrollbar();
+    requestAnimationFrame(setupBeanScrollbar);
+    setTimeout(setupBeanScrollbar, 220);
+    window.addEventListener('load', setupBeanScrollbar, { once: true });
 });
 
 function getPathPrefix() {
@@ -165,4 +170,235 @@ function loadToast() {
     `;
     
     document.body.insertAdjacentHTML('beforeend', toastHTML);
+}
+
+let beanScrollbarController = null;
+const desktopBeanQuery = window.matchMedia('(min-width: 769px)');
+
+function setupBeanScrollbar() {
+    if (!desktopBeanQuery.matches) {
+        destroyBeanScrollbar();
+        return;
+    }
+
+    if (!beanScrollbarController) {
+        beanScrollbarController = createBeanScrollbar();
+    }
+
+    beanScrollbarController.refresh();
+}
+
+function destroyBeanScrollbar() {
+    if (!beanScrollbarController) {
+        document.documentElement.classList.remove('bean-scrollbar-enabled');
+        document.body.classList.remove('bean-scrollbar-enabled', 'bean-dragging');
+        return;
+    }
+
+    beanScrollbarController.destroy();
+    beanScrollbarController = null;
+}
+
+function createBeanScrollbar() {
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const IDLE_DELAY_MS = 1300;
+    const EDGE_WAKE_ZONE_PX = 56;
+
+    const track = document.createElement('div');
+    track.className = 'bean-scrollbar bean-hidden';
+    track.setAttribute('aria-hidden', 'true');
+
+    const thumb = document.createElement('div');
+    thumb.className = 'bean-scrollbar-thumb';
+
+    track.appendChild(thumb);
+    document.body.appendChild(track);
+
+    document.documentElement.classList.add('bean-scrollbar-enabled');
+    document.body.classList.add('bean-scrollbar-enabled');
+
+    let isDragging = false;
+    let dragStartY = 0;
+    let dragStartScroll = 0;
+    let thumbHeight = 52;
+    let idleTimer = null;
+
+    function clearIdleTimer() {
+        if (idleTimer !== null) {
+            window.clearTimeout(idleTimer);
+            idleTimer = null;
+        }
+    }
+
+    function setActiveState() {
+        track.classList.remove('bean-idle');
+        clearIdleTimer();
+    }
+
+    function scheduleIdleState() {
+        clearIdleTimer();
+        if (isDragging || track.classList.contains('bean-hidden')) return;
+
+        idleTimer = window.setTimeout(() => {
+            if (!isDragging && !track.classList.contains('bean-hidden')) {
+                track.classList.add('bean-idle');
+            }
+        }, IDLE_DELAY_MS);
+    }
+
+    function getTopInset() {
+        const nav = document.querySelector('.glass-nav');
+        if (!nav) return 12;
+        return Math.max(12, Math.round(nav.getBoundingClientRect().bottom + 8));
+    }
+
+    function getBottomInset() {
+        const footer = document.querySelector('.glass-footer');
+        if (!footer) return 12;
+
+        const visibleFooterHeight = Math.max(0, window.innerHeight - footer.getBoundingClientRect().top);
+        return Math.max(12, Math.round(visibleFooterHeight + 8));
+    }
+
+    function getMaxScroll() {
+        return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    }
+
+    function syncThumb() {
+        track.style.top = `${getTopInset()}px`;
+        track.style.bottom = `${getBottomInset()}px`;
+
+        const maxScroll = getMaxScroll();
+        const trackHeight = track.clientHeight;
+
+        if (maxScroll <= 0 || trackHeight <= 0) {
+            track.classList.add('bean-hidden');
+            track.classList.remove('bean-idle');
+            clearIdleTimer();
+            return;
+        }
+
+        track.classList.remove('bean-hidden');
+
+        thumbHeight = clamp(trackHeight * 0.22, 38, 56);
+        thumb.style.height = `${thumbHeight}px`;
+
+        const thumbTravel = Math.max(0, trackHeight - thumbHeight);
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const nextY = thumbTravel * (scrollTop / maxScroll);
+
+        thumb.style.transform = `translateY(${nextY}px)`;
+        setActiveState();
+        scheduleIdleState();
+    }
+
+    function scrollFromTrackOffset(offsetY) {
+        const trackHeight = track.clientHeight;
+        const maxScroll = getMaxScroll();
+        const thumbTravel = Math.max(1, trackHeight - thumbHeight);
+        const nextThumbY = clamp(offsetY, 0, thumbTravel);
+        const nextScrollTop = (nextThumbY / thumbTravel) * maxScroll;
+
+        window.scrollTo({
+            top: nextScrollTop,
+            behavior: 'auto'
+        });
+    }
+
+    function onTrackMouseDown(event) {
+        if (event.target === thumb) return;
+        setActiveState();
+        const rect = track.getBoundingClientRect();
+        const desiredThumbTop = event.clientY - rect.top - (thumbHeight / 2);
+        scrollFromTrackOffset(desiredThumbTop);
+        scheduleIdleState();
+    }
+
+    function onThumbMouseDown(event) {
+        isDragging = true;
+        setActiveState();
+        dragStartY = event.clientY;
+        dragStartScroll = window.scrollY || document.documentElement.scrollTop;
+        document.body.classList.add('bean-dragging');
+        event.preventDefault();
+    }
+
+    function onMouseMove(event) {
+        if (!isDragging) {
+            if (event.clientX >= (window.innerWidth - EDGE_WAKE_ZONE_PX) && getMaxScroll() > 0) {
+                setActiveState();
+                scheduleIdleState();
+            }
+            return;
+        }
+
+        setActiveState();
+
+        const trackHeight = track.clientHeight;
+        const thumbTravel = Math.max(1, trackHeight - thumbHeight);
+        const maxScroll = getMaxScroll();
+        const deltaY = event.clientY - dragStartY;
+        const deltaScroll = (deltaY / thumbTravel) * maxScroll;
+        const nextScrollTop = clamp(dragStartScroll + deltaScroll, 0, maxScroll);
+
+        window.scrollTo({
+            top: nextScrollTop,
+            behavior: 'auto'
+        });
+    }
+
+    function stopDragging() {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.classList.remove('bean-dragging');
+        scheduleIdleState();
+    }
+
+    function onWheel() {
+        if (getMaxScroll() <= 0) return;
+        setActiveState();
+        scheduleIdleState();
+    }
+
+    function onKeyDown(event) {
+        if (getMaxScroll() <= 0) return;
+        const scrollKeys = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', 'Space']);
+        if (!scrollKeys.has(event.code)) return;
+        setActiveState();
+        scheduleIdleState();
+    }
+
+    window.addEventListener('scroll', syncThumb, { passive: true });
+    window.addEventListener('resize', syncThumb);
+    window.addEventListener('wheel', onWheel, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', stopDragging);
+    track.addEventListener('mousedown', onTrackMouseDown);
+    thumb.addEventListener('mousedown', onThumbMouseDown);
+
+    return {
+        refresh: syncThumb,
+        destroy: () => {
+            window.removeEventListener('scroll', syncThumb);
+            window.removeEventListener('resize', syncThumb);
+            window.removeEventListener('wheel', onWheel);
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', stopDragging);
+            track.removeEventListener('mousedown', onTrackMouseDown);
+            thumb.removeEventListener('mousedown', onThumbMouseDown);
+            stopDragging();
+            clearIdleTimer();
+            track.remove();
+            document.documentElement.classList.remove('bean-scrollbar-enabled');
+            document.body.classList.remove('bean-scrollbar-enabled', 'bean-dragging');
+        }
+    };
+}
+
+if (desktopBeanQuery.addEventListener) {
+    desktopBeanQuery.addEventListener('change', setupBeanScrollbar);
+} else if (desktopBeanQuery.addListener) {
+    desktopBeanQuery.addListener(setupBeanScrollbar);
 }

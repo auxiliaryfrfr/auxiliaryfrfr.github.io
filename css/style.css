@@ -28,6 +28,72 @@ body {
     flex-direction: column;
 }
 
+/* PC SCROLLBAR */
+
+@media (min-width: 769px) {
+    html.bean-scrollbar-enabled {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    html.bean-scrollbar-enabled::-webkit-scrollbar,
+    body.bean-scrollbar-enabled::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+    }
+
+    .bean-scrollbar {
+        position: fixed;
+        top: 84px;
+        right: 8px;
+        bottom: 12px;
+        width: 14px;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        z-index: 1200;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .bean-scrollbar.bean-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .bean-scrollbar.bean-idle {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .bean-scrollbar-thumb {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 52px;
+        border: none;
+        border-radius: 999px;
+        background: rgba(168, 168, 168, 0.78);
+        box-shadow: none;
+        cursor: grab;
+        transition: background-color 0.2s ease;
+    }
+
+    .bean-scrollbar-thumb:hover {
+        background: rgba(188, 188, 188, 0.9);
+    }
+
+    .bean-scrollbar-thumb:active,
+    body.bean-dragging .bean-scrollbar-thumb {
+        cursor: grabbing;
+        background: rgba(146, 146, 146, 0.95);
+    }
+
+    body.bean-dragging {
+        user-select: none;
+    }
+}
+
 /* ANIMATIONS & LOADER */
 
 #splash-screen {
