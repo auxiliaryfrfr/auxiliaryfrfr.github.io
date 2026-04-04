@@ -116,12 +116,6 @@ body {
     animation: scaleUp 2s ease-in-out forwards;
 }
 
-.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
 @keyframes scaleUp {
     0% { transform: scale(0.8); opacity: 0; }
     50% { opacity: 1; }
@@ -333,11 +327,8 @@ body {
     max-width: 600px; 
 }
 
-.custom-dropdown, .filter-tag {
-    height: 42px; 
-}
-
 .custom-dropdown {
+    height: 42px;
     position: relative;
     flex: 1; 
     font-family: var(--font-head);
@@ -402,31 +393,6 @@ body {
 .dropdown-options li:hover, .dropdown-options li.active-option {
     background: var(--pink-primary);
     color: #000;
-}
-
-.tags-container {
-    display: flex;
-    gap: 10px;
-}
-
-.filter-tag {
-    background: transparent;
-    border: 1px solid #333;
-    color: #666;
-    padding: 0 20px; 
-    display: flex;
-    align-items: center;
-    border-radius: 50px;
-    cursor: pointer;
-    font-family: var(--font-head);
-    font-size: 0.8rem;
-    transition: all 0.3s;
-}
-
-.filter-tag:hover, .filter-tag.active {
-    border-color: var(--pink-primary);
-    color: var(--pink-primary);
-    box-shadow: 0 0 10px rgba(255, 128, 171, 0.2);
 }
 
 /* BLOG CARDS */
@@ -834,7 +800,6 @@ body {
     .support-card .kofi-support-btn { width: 100%; max-width: 290px; }
     .filters-row { flex-direction: column; width: 100%; }
     .custom-dropdown { width: 100%; }
-    .tags-container { flex-wrap: wrap; justify-content: center; }
     
     #filterDropdown { display: none; }
 }
@@ -1282,6 +1247,7 @@ body {
 }
 
 /* MOBILE LOADING SCREEN */
+
     
     #splash-screen {
         position: fixed !important;
@@ -1332,17 +1298,14 @@ body {
 }
 
 /* MOBILE BLOG TAGS */
-    
-    .tags-container {
-        display: none !important;
-    }
+
 
     .mobile-only-dropdown {
         z-index: 9999 !important; 
         position: relative !important;
         cursor: pointer !important; 
     }
-    
+
     .mobile-only-dropdown .dropdown-options {
         z-index: 10000 !important;
         background-color: #000 !important;
@@ -1596,7 +1559,6 @@ body {
     gap: 10px;
     justify-content: center;
 }
-.user-name { font-weight: bold; color: white; font-size: 0.9rem; }
 .user-tag { font-size: 0.75rem; color: #888; }
 
 .btn-logout {

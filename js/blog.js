@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
-    const filterTags = document.querySelectorAll('.filter-tag');
     const blogGrid = document.getElementById('blogGrid');
     const posts = Array.from(document.querySelectorAll('.blog-post'));
     const noResults = document.getElementById('noResults');
