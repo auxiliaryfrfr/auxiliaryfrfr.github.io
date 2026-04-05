@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GTA 7</title>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+	<link rel="icon" href="../images/projects.svg" type="image/svg+xml">
+	<style>
+		.gta7-wrap {
+			width: min(900px, 100%);
+			margin: 0 auto;
+			text-align: left;
+		}
+
+		.gta7-title {
+			margin-bottom: 1rem;
+		}
+
+		.gta7-subtitle {
+			color: #ff80ab;
+			margin-bottom: 1.5rem;
+			font-size: 1.05rem;
+			font-family: 'JetBrains Mono', monospace;
+		}
+
+		.gta7-code-window {
+			border: 1px solid #30363d;
+			border-radius: 12px;
+			overflow: hidden;
+			background: #0d1117;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+		}
+
+		.gta7-code-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0.7rem 1rem;
+			border-bottom: 1px solid #30363d;
+			background: #161b22;
+		}
+
+		.gta7-code-dots {
+			display: flex;
+			gap: 0.45rem;
+		}
+
+		.gta7-code-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+		}
+
+		.gta7-code-dot.red {
+			background: #ff5f56;
+		}
+
+		.gta7-code-dot.yellow {
+			background: #ffbd2e;
+		}
+
+		.gta7-code-dot.green {
+			background: #27c93f;
+		}
+
+		.gta7-code-filename {
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.8rem;
+			color: #8b949e;
+			letter-spacing: 0.03em;
+		}
+
+		.gta7-code {
+			padding: 1rem 1.2rem;
+			overflow-x: auto;
+			margin: 0;
+			background: #0d1117;
+		}
+
+		.gta7-code code {
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.95rem;
+			line-height: 1.6;
+		}
+
+		.gta7-enjoy {
+			margin-top: 1.2rem;
+			color: #e9e9e9;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 1rem;
+		}
+	</style>
+</head>
+<body>
+	<div id="app-container">
+		<section class="section-padding empty-state-container">
+			<div class="gta7-wrap">
+				<h2 class="section-title gta7-title">GTA 7</h2>
+				<div class="gta7-code-window">
+					<div class="gta7-code-header">
+						<div class="gta7-code-dots">
+							<span class="gta7-code-dot red"></span>
+							<span class="gta7-code-dot yellow"></span>
+							<span class="gta7-code-dot green"></span>
+						</div>
+						<span class="gta7-code-filename">gta7.py</span>
+					</div>
+					<pre class="gta7-code"><code class="language-python">name = "gta7"
+graphics = "great"
+difficult = "nah"
+boobs_physics = "diabolical"
+space = "jump"
+wasd = "move"
+click = "shoot"
+hackers = False
+bugs = False
+
+def ban():
+    if hackers:
+        hackers = False
+
+if bugs:
+    bugs = False
+
+if hackers:
+        ban()</code></pre>
+				</div>
+				<a href="./" class="btn btn-secondary" style="margin-top: 2rem;">Back to Projects</a>
+			</div>
+		</section>
+	</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+	hljs.highlightAll();
+</script>
+<script src="../js/components.js"></script>
+<script src="../js/auth.js"></script>
+</body>
+</html>
