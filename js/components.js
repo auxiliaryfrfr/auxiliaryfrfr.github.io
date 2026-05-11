@@ -14,7 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getPathPrefix() {
     const path = window.location.pathname;
-    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/') || path.includes('/about/') || path.includes('/tos/') || path.includes('/pp/')) {
+    if (path.includes('/friends/') && !path.endsWith('/friends/') && !path.endsWith('/friends/index.html')) {
+        return '../../';
+    }
+    if (path.includes('/blog/') || path.includes('/projects/') || path.includes('/socials/') || path.includes('/dash/') || path.includes('/about/') || path.includes('/friends/') || path.includes('/tos/') || path.includes('/pp/')) {
         return '../'; 
     }
     return './'; 
@@ -28,9 +31,10 @@ function loadNavigation() {
     const isProjects = path.includes('/projects/');
     const isSocials = path.includes('/socials/');
     const isAbout = path.includes('/about/');
+    const isFriends = path.includes('/friends/');
     const isTos = path.includes('/tos/');
     const isPp = path.includes('/pp/');
-    const isHome = !isBlog && !isProjects && !isSocials && !isAbout && !isTos && !isPp && !path.includes('/dash/');
+    const isHome = !isBlog && !isProjects && !isSocials && !isAbout && !isFriends && !isTos && !isPp && !path.includes('/dash/');
 
     const navHTML = `
     <nav class="glass-nav">
@@ -39,6 +43,7 @@ function loadNavigation() {
             <ul class="nav-links desktop-menu">
                 <li><a href="${prefix}" class="${isHome ? 'active' : ''}">Home</a></li>
                 <li><a href="${prefix}about/" class="${isAbout ? 'active' : ''}">About</a></li>
+                <li><a href="${prefix}friends/" class="${isFriends ? 'active' : ''}">Friends</a></li>
                 <li><a href="${prefix}blog/" class="${isBlog ? 'active' : ''}">Blog</a></li>
                 <li><a href="${prefix}projects/" class="${isProjects ? 'active' : ''}">Projects</a></li>
                 <li><a href="${prefix}socials/" class="${isSocials ? 'active' : ''}">Socials</a></li>
@@ -102,6 +107,7 @@ function loadNavigation() {
     <div class="mobile-menu" id="mobileMenu">
         <a href="${prefix}" class="${isHome ? 'active' : ''}">Home</a>
         <a href="${prefix}about/" class="${isAbout ? 'active' : ''}">About</a>
+        <a href="${prefix}friends/" class="${isFriends ? 'active' : ''}">Friends</a>
         <a href="${prefix}blog/" class="${isBlog ? 'active' : ''}">Blog</a>
         <a href="${prefix}projects/" class="${isProjects ? 'active' : ''}">Projects</a>
         <a href="${prefix}socials/" class="${isSocials ? 'active' : ''}">Socials</a>
