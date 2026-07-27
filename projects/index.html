@@ -12,7 +12,8 @@
     <link rel="icon" href="../images/projects.svg" type="image/svg+xml">
     <meta property="og:title" content="AUXILIARYFRFR - Projects">
     <meta property="og:description" content="Look at my various projects!">
-    <meta name="theme-color" content="#ff80ab"> <meta property="og:image" content="https://auxiliaryfrfr.com/images/embed.png">
+    <meta name="theme-color" content="#ff80ab"> 
+    <meta property="og:image" content="https://auxiliaryfrfr.com/images/embed.png">
     <meta name="twitter:card" content="summary_large_image">
 
     <style>
@@ -107,6 +108,29 @@
         .project-card:hover .card-link-text {
             color: #ff80ab;
         }
+
+        .feedback-banner {
+            margin-top: 4rem;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .feedback-link {
+            color: #ff80ab;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 1px dashed rgba(255, 128, 171, 0.5);
+            padding-bottom: 2px;
+        }
+
+        .feedback-link:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+            text-shadow: 0 0 10px rgba(255, 128, 171, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -181,8 +205,12 @@
                 </p>
             </div>
 
+            <div class="feedback-banner">
+                <p>Something not working as expected? <a href="../socials/" class="feedback-link">Let me know!</a></p>
+            </div>
+
             <br>
-            <a href="../" class="btn btn-secondary" style="margin-top: 3rem;">Return Home</a>
+            <a href="../" class="btn btn-secondary" style="margin-top: 1rem;">Return Home</a>
         </section>
     </div>
 
