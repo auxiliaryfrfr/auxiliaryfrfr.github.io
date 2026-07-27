@@ -182,24 +182,72 @@ document.addEventListener('DOMContentLoaded', () => {
     if (toggle) {
         toggle.addEventListener('change', (e) => {
             if (e.target.checked) {
-                let snark = document.querySelector('.snark-text');
-                if (!snark) {
-                    snark = document.createElement('span');
-                    snark.className = 'snark-text';
-                    e.target.parentElement.parentElement.appendChild(snark);
+
+                if (Math.random() < 0.01) {
+                    const style = document.createElement('style');
+                    style.id = 'flashbang-style';
+                    style.innerHTML = `
+                         @keyframes flashFade {
+                             0% { opacity: 1; }
+                             100% { opacity: 0; }
+                         }
+                         .flashbang-overlay {
+                             position: fixed !important;
+                             top: 0 !important;
+                             left: 0 !important;
+                             width: 100vw !important;
+                             height: 100vh !important;
+                             background-color: #ffffff !important;
+                             z-index: 999999 !important;
+                             pointer-events: none !important;
+                             animation: flashFade 4s ease-out forwards !important;
+                         }                    
+                    `;
+                    document.head.appendChild(style);
+
+                    const flash = document.createElement('div');
+                    flash.id = 'flashbang-div';
+                    flash.className = 'flashbang-overlay';
+                    document.body.appendChild(flash);
+
+                    const ring = new Audio('/audio/ring.mp3');
+                    ring.play().catch(err => console.log("Audio error:", err));
+
+                    setTimeout(() =>  {
+                        e.target.checked = false;
+                        const slider = e.target.nextElementSibling;
+                        if (slider) {
+                            slider.classList.add('shake-reject');
+                            setTimeout(() => slider.classList.remove('shake-reject'), 400);
+                        }
+                    }, 200);
+
+                    setTimeout(() =>  {
+                        const flashDiv = document.getElementById('flashbang-div');
+                        const flashStyle = document.getElementById('flashbang-style');
+                        if (flashDiv) flashDiv.remove();
+                        if (flashStyle) flashStyle.remove();
+                    }, 4500);
+                } else {
+                    let snark = document.querySelector('.snark-text');
+                    if (!snark) {
+                        snark = document.createElement('span');
+                        snark.className = 'snark-text';
+                        e.target.parentElement.parentElement.appendChild(snark);
+                    }
+
+                    setTimeout(() => {
+                        e.target.checked = false;
+                        const slider = e.target.nextElementSibling;
+                        slider.classList.add('shake-reject');
+                        setTimeout(() => slider.classList.remove('shake-reject'), 400);
+
+                        snark.innerText = lightmodelist[Math.floor(Math.random() * lightmodelist.length)];
+                        snark.classList.add('visible');
+
+                        setTimeout(() => snark.classList.remove('visible'), 2000);
+                    }, 200); 
                 }
-
-                setTimeout(() => {
-                    e.target.checked = false;
-                    const slider = e.target.nextElementSibling;
-                    slider.classList.add('shake-reject');
-                    setTimeout(() => slider.classList.remove('shake-reject'), 400);
-
-                    snark.innerText = lightmodelist[Math.floor(Math.random() * lightmodelist.length)];
-                    snark.classList.add('visible');
-
-                    setTimeout(() => snark.classList.remove('visible'), 2000);
-                }, 200); 
             }
         });
     }
