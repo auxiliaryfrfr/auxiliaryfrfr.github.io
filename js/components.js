@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     loadNavigation();
     loadFooter(); 
+    loadEpilepsyToast();
     
     if (window.location.href.includes('/blog/')) {
         loadToast();
@@ -177,6 +178,61 @@ function loadToast() {
     
     document.body.insertAdjacentHTML('beforeend', toastHTML);
 }
+
+function loadEpilepsyToast() {
+    if (localStorage.getItem('epilepsyWarningDismissed')) return;
+
+    const toastHTML = `
+    <div id="epilepsyToast" class="system-toast" style="z-index: 999999;">
+        <button class="btn-toast-close" onclick="handleEpilepsyAction('understand')">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="toast-content">
+            <div class="toast-icon" style="color: #ff74a4;">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="toast-text">
+                <h4 style="color: #ffffff;">Epilepsy Warning</h4>
+                <p>This site has elements that may trigger sudden, bright flashes of light.</p>
+            </div>
+        </div>
+        <div class="toast-actions" style="display: flex; gap: 8px;">
+            <button class="btn-toast-login" style="background: transparent; color: #fff; border: 1px solid #ff74a4; width: 50%;" onclick="handleEpilepsyAction('leave')">
+                Leave
+            </button>
+            <button class="btn-toast-login" style="background: #ff74a4; color: #111; width: 50%;" onclick="handleEpilepsyAction('understand')">
+                Got It
+            </button>
+        </div>
+    </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', toastHTML);
+
+    setTimeout(() => {
+        const toast = document.getElementById('epilepsyToast');
+        if (toast) toast.classList.add('visible');
+    }, 1500); 
+}
+
+window.handleEpilepsyAction = function(action) {
+    if (action === 'leave') {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = 'https://google.com';
+        }
+        return;
+    }
+
+    const toast = document.getElementById('epilepsyToast');
+    if (toast) {
+        toast.classList.remove('visible');
+        localStorage.setItem('epilepsyWarningDismissed', 'true');
+        setTimeout(() => toast.remove(), 400); 
+    }
+};
 
 let beanScrollbarController = null;
 const desktopBeanQuery = window.matchMedia('(min-width: 769px)');
